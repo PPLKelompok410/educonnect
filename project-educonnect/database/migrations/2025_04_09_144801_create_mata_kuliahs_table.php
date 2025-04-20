@@ -9,14 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('mata_kuliahs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('kode');
-            $table->string('prodi');
-            $table->string('gambar');
+            $table->string('nama');            // dari kamu
+            $table->string('kode');            // dari kamu
+            $table->string('prodi');           // dari kamu
+            $table->string('gambar');          // dari kamu
+            $table->text('deskripsi')->nullable(); // dari teman
             $table->timestamps();
         });
     }

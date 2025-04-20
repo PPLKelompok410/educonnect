@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamps();
     
             // Foreign Key Constraints
-            $table->foreign('matkul_id')->references('id')->on('matkuls')->onDelete('cascade');
+            $table->foreign('matkul_id')->references('id')->on('mata_kuliahs')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
