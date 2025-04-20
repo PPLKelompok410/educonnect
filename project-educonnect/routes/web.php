@@ -14,3 +14,4 @@ Route::get('/', function () {
 });
 
 Route::get('/matkul', [MataKuliahController::class, 'index']);
+Route::get('/matkul/{id}/discussion', [MataKuliahController::class, 'discussion'])->name('matkul.discussion');
