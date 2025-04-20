@@ -24,7 +24,7 @@ class CommentController extends Controller
         $comment->comment = $request->comment;
         $comment->save();
 
-        return redirect()->route('matkul.show', $matkulId)->with('success', 'Comment added successfully');
+        return redirect()->route('matkul.discussion', $matkulId)->with('success', 'Comment added successfully');
     }
 
     public function edit($id)
@@ -43,7 +43,7 @@ class CommentController extends Controller
         $comment->comment = $request->comment;
         $comment->save();
 
-        return redirect()->route('matkul.show', $comment->matkul_id)->with('success', 'Comment updated successfully');
+        return redirect()->route('matkul.discussion', $comment->matkul_id)->with('success', 'Comment updated successfully');
     }
 
     public function destroy($id)
@@ -52,6 +52,6 @@ class CommentController extends Controller
         $matkulId = $comment->matkul_id;
         $comment->delete();
 
-        return redirect()->route('matkul.show', $matkulId)->with('success', 'Comment deleted successfully');
+        return redirect()->route('matkul.discussion', $matkulId)->with('success', 'Comment deleted successfully');
     }
 }

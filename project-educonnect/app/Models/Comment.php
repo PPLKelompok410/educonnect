@@ -13,8 +13,8 @@ class Comment extends Model
 
     public function matkul()
     {
-        return $this->belongsTo(Matkul::class);
-    }
+        return $this->belongsTo(\App\Models\MataKuliah::class, 'matkul_id');
+    }   
 
     public function user()
     {
