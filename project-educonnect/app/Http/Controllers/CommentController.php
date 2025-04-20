@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
-use App\Models\Matkul;
+use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,12 +15,12 @@ class CommentController extends Controller
             'comment' => 'required|string|max:255',
         ]);
 
-        $matkul = Matkul::findOrFail($matkulId);
+        $matkul = MataKuliah::findOrFail($matkulId);
 
         // Menyimpan komentar baru
         $comment = new Comment();
         $comment->matkul_id = $matkul->id;
-        $comment->user_id = Auth::id();  // Pengguna yang sedang login
+        $comment->user_id = 1;  // tunggu fitur login baru pakai Auth::id();
         $comment->comment = $request->comment;
         $comment->save();
 
