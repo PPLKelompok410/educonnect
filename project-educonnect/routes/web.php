@@ -17,7 +17,7 @@ Route::put('/comments/{id}', [CommentController::class, 'update'])->name('commen
 Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
 // Page notes 
-Route::get('/matkul/{matkul}/notes', [NoteController::class, 'index'])->name('notes.index');
+Route::get('/matkul/{matkul}', [NoteController::class, 'index'])->name('notes.index');
 
 // Page comments di notes
 Route::get('/notes/{note}', [NoteController::class, 'show'])->name('notes.show');
