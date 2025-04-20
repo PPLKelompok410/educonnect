@@ -12,7 +12,7 @@ class MataKuliahController
         $mataKuliah = MataKuliah::all();
         $prodis = MataKuliah::select('prodi')->distinct()->pluck('prodi');
         
-        return view('galleryMatkul', compact('mataKuliah', 'prodis'));
+        return view('matkul.galleryMatkul', compact('mataKuliah', 'prodis'));
     }
 
     public function discussion($id)

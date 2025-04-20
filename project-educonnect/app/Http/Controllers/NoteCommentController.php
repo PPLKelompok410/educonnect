@@ -36,9 +36,10 @@ class NoteCommentController extends Controller
     {
         $comment = NoteComment::findOrFail($id);
 
-        if ($comment->user_id !== auth()->id()) {
-            abort(403);
-        }
+        // Aktifin lagi kalau udah ada fitur login
+        // if ($comment->user_id !== auth()->id()) {
+        //     abort(403);
+        // } 
 
         $comment->delete();
 

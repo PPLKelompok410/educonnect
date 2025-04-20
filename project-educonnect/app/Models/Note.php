@@ -13,6 +13,7 @@ class Note extends Model
         'user_id',
         'judul',
         'file_path',
+        'matkul_id',
     ];
 
     public function user()
@@ -24,5 +25,10 @@ class Note extends Model
     {
         return $this->hasMany(NoteComment::class);
     }
+
+    public function matkul()
+{
+    return $this->belongsTo(MataKuliah::class);
+}
 }
 

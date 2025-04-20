@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(MataKuliahSeeder::class);
+        $this->call(NoteSeeder::class);
     }
 }
