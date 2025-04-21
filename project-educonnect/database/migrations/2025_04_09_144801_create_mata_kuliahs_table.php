@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('mata_kuliahs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');            // dari kamu
-            $table->string('kode');            // dari kamu
-            $table->string('prodi');           // dari kamu
-            $table->string('gambar');          // dari kamu
-            $table->text('deskripsi')->nullable(); // dari teman
+            $table->string('nama');  
+            $table->string('kode');    
+            $table->string('prodi');           
+            $table->string('gambar')->nullable();       
+            $table->text('deskripsi')->nullable();
             $table->timestamps();
         });
     }

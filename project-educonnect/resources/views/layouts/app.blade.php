@@ -6,13 +6,15 @@
   <title>@yield('title', 'Educonnect')</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 <body>
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg shadow-sm" style="background-color: #87CEEB;">
     <div class="container">
-      <a class="navbar-brand fw-bold text-white" href="#">Educonnect</a>
+      <a class="navbar-brand fw-bold text-white" href="/">Educonnect</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
         <span class="navbar-toggler-icon"></span>
       </button>

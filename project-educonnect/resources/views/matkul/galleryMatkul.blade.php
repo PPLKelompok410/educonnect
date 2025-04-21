@@ -6,6 +6,12 @@
 <div class="container py-5">
   <h2 class="mb-4 text-center">📚 Pilih Mata Kuliah</h2>
   
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('matkul.manage') }}" class="btn btn-success">
+        <i class="bi bi-gear-fill"></i> Kelola Matkul
+    </a>
+  </div>
+
   <!-- Filter dan Search -->
    <div class="row mb-4 justify-content-center">
         <div class="input-group w-auto">
@@ -32,16 +38,22 @@
   <!-- Gallery -->
   <div class="row" id="mataKuliahGallery">
   @foreach ($mataKuliah as $mk)
-    <div class="col-md-4 mb-4 mata-kuliah" data-prodi="{{ $mk->prodi }}">
-        <div class="card shadow-sm">
-        <img src="{{ $mk->gambar ?? 'https://images.pexels.com/photos/28216688/pexels-photo-28216688/free-photo-of-autumn-camping.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' . urlencode($mk->nama) }}" class="card-img-top" alt="{{ $mk->nama }}" />
+  <div class="col-md-4 mb-4 mata-kuliah" data-prodi="{{ $mk->prodi }}">
+    <a href="{{ url('matkul/' . $mk->id) }}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+        <img 
+          src="{{ $mk->gambar ? asset('storage/sampul/' . $mk->gambar) : asset('images/default-photo.jpg') }}" 
+          class="card-img-top object-fit-cover" 
+          style="height: 200px;" 
+          alt="{{ $mk->nama }}">
             <div class="card-body">
                 <h5 class="card-title">{{ $mk->nama }}</h5>
                 <p class="card-text">Kode: {{ $mk->kode }}</p>
                 <span class="badge bg-primary">{{ $mk->prodi }}</span>
             </div>
         </div>
-    </div>
+    </a>
+</div>
     @endforeach
   </div>
 </div>
