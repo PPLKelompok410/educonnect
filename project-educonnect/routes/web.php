@@ -8,6 +8,12 @@ use App\Http\Controllers\NoteCommentController;
 
 // Page Galeri Matkul (Home)
 Route::get('/', [MataKuliahController::class, 'index']);
+Route::get('/matkul/manage', [MataKuliahController::class, 'manage'])->name('matkul.manage');
+Route::get('/matkul/create', [MataKuliahController::class, 'create'])->name('matkul.create');
+Route::post('/matkul', [MataKuliahController::class, 'store'])->name('matkul.store');
+Route::get('/matkul/{id}/edit', [MataKuliahController::class, 'edit'])->name('matkul.edit');
+Route::put('/matkul/{id}', [MataKuliahController::class, 'update'])->name('matkul.update');
+Route::delete('/matkul/{id}', [MataKuliahController::class, 'destroy'])->name('matkul.destroy');
 
 // Page Diskusi di Matkul
 Route::get('/matkul/{id}/discussion', [MataKuliahController::class, 'discussion'])->name('matkul.discussion');
