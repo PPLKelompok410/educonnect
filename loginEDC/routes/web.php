@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::view('/dashboard', 'dashboard')->name('dashboard');
+
 
 Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/login_process', [AuthController::class, 'login_process'])->name('auth.login_process');
