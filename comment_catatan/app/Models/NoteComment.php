@@ -9,7 +9,11 @@ class NoteComment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['note_id', 'user_id', 'content'];
+    protected $fillable = [
+        'note_id', 
+        'user_id', 
+        'content'
+    ];
 
     public function user()
     {
