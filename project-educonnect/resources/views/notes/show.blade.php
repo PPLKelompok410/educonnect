@@ -7,19 +7,35 @@
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <h2 class="mb-3">
-                <i class="fas fa-sticky-note text-success"></i> Catatan KSI
+                <i class="fas fa-sticky-note text-success"></i> {{ $note->judul }}
             </h2>
+
             <p>
                 <strong>File Catatan:</strong>
-                <a href="{{ asset('storage/images/IMG_1053.jpg') }}" target="_blank">Lihat File</a>
+                <a href="{{ asset('storage/' . $note->file_path) }}" target="_blank">Lihat File</a>
             </p>
 
             {{-- Preview Gambar --}}
-            <img src="{{ asset('storage/images/IMG_1053.jpg') }}" alt="Preview Catatan" class="img-fluid mb-3" style="max-width: 400px;">
+            <img src="{{ asset('storage/' . $note->file_path) }}" alt="Preview Catatan" class="img-fluid mb-3" style="max-width: 400px;">
 
             <p class="text-muted">
-                🗓️ Dibagikan oleh: <strong>Anonymous</strong> | {{ now()->format('d M Y') }}
+                🗓️ Dibagikan oleh: <strong>{{ $note->user->full_name ?? 'Anonymous' }}</strong> | {{ $note->created_at->format('d M Y') }}
             </p>
+
+            {{-- Tombol Aksi untuk Note --}}
+            <div class="mt-3">
+                <a href="{{ route('notes.edit', $note->id) }}" class="btn btn-warning me-2">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+
+                <form action="{{ route('notes.destroy', $note->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus catatan ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 

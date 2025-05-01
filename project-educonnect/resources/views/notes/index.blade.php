@@ -8,6 +8,17 @@
         <i class="fas fa-folder-open"></i> Daftar Catatan – <span class="text-dark">{{ $matkul->nama }}</span>
     </h2>
 
+    {{-- Tombol Tambah Catatan & Forum Diskusi --}}
+    <div class="d-flex gap-2 mb-4">
+        <a href="{{ route('notes.create', $matkul->id) }}" class="btn btn-success">
+            Tambah Catatan
+        </a>
+        <a href="{{ route('matkul.discussion', $matkul->id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-comments"></i> Forum Diskusi
+        </a>
+    </div>
+
+
     @if ($notes->count() > 0)
         <div class="row">
             @foreach ($notes as $note)
@@ -21,9 +32,26 @@
                                     <small class="text-muted">{{ $note->created_at->format('d M Y') }}</small>
                                 </p>
                             </div>
-                            <a href="{{ route('notes.show', $note->id) }}" class="btn btn-outline-primary btn-sm mt-auto">
-                                <i class="fas fa-eye"></i> Lihat Catatan
-                            </a>
+
+                            {{-- Tombol Aksi --}}
+                            <div class="mt-auto">
+                                <a href="{{ route('notes.show', $note->id) }}" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="fas fa-eye"></i> Lihat
+                                </a>
+
+                                @if(optional(auth()->user())->id == $note->user_id)
+                                    <a href="{{ route('notes.edit', $note->id) }}" class="btn btn-warning btn-sm me-2">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ route('notes.destroy', $note->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus catatan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
