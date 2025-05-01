@@ -26,7 +26,7 @@
                         oleh <strong>{{ $comment->user->name }}</strong> pada {{ $comment->created_at->format('d M Y, H:i') }}
                     </small>
 
-                    @if(Auth::id() === $comment->user_id)
+                    {{-- @if(Auth::id() === $comment->user_id) --}}
                         <div>
                             <a href="{{ route('comments.edit', $comment->id) }}" class="btn btn-sm btn-outline-primary me-2">
                                 <i class="bi bi-pencil-square"></i> Edit
@@ -40,7 +40,7 @@
                                 </button>
                             </form>
                         </div>
-                    @endif
+                    {{-- @endif --}}
                 </div>
             </div>
         </div>

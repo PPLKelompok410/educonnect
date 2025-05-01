@@ -80,6 +80,6 @@ class NoteController extends Controller
         Storage::disk('public')->delete($note->file_path);
         $note->delete();
 
-        return back()->with('success', 'Gambar berhasil dihapus.');
+        return redirect()->route('notes.index', $note->matkul_id)->with('success', 'Gambar berhasil dihapus.');
     }
 }

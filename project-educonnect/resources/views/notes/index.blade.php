@@ -8,10 +8,15 @@
         <i class="fas fa-folder-open"></i> Daftar Catatan – <span class="text-dark">{{ $matkul->nama }}</span>
     </h2>
 
-    {{-- Tombol Tambah Catatan --}}
-    <a href="{{ route('notes.create', $matkul->id) }}" class="btn btn-success">
-        Tambah Catatan
-    </a>
+    {{-- Tombol Tambah Catatan & Forum Diskusi --}}
+    <div class="d-flex gap-2 mb-4">
+        <a href="{{ route('notes.create', $matkul->id) }}" class="btn btn-success">
+            Tambah Catatan
+        </a>
+        <a href="{{ route('matkul.discussion', $matkul->id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-comments"></i> Forum Diskusi
+        </a>
+    </div>
 
 
     @if ($notes->count() > 0)
