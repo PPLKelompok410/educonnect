@@ -77,9 +77,27 @@ class NoteController extends Controller
 
     public function destroy(Note $note)
     {
-        Storage::disk('public')->delete($note->file_path);
+        // Hapus file catatan jika ada
+        if ($note->file_path && \Storage::exists($note->file_path)) {
+            \Storage::delete($note->file_path);
+        }
+
+        // Hapus catatan dari database
         $note->delete();
 
-        return back()->with('success', 'Gambar berhasil dihapus.');
+        // Redirect dengan pesan sukses
+        return redirect()->route('notes.index', $note->matkul_id)->with('success', 'Catatan berhasil dihapus.');
+    }
+
+    public function rate(Request $request, Note $note)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        $note->rating = $request->rating;
+        $note->save();
+
+        return redirect()->back()->with('success', 'Rating berhasil diberikan.');
     }
 }
