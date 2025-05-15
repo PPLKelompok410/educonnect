@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
-
+Route::view('/', 'welcome')->name('welcome');
 Route::view('/dashboard', 'dashboard')->name('dashboard');
 
 
@@ -17,4 +17,4 @@ Route::post('/forgot_password_process', [AuthController::class, 'process_forgot_
 Route::get('/security_question', [AuthController::class, 'security_question'])->name('auth.security_question');
 Route::post('/security_question_process', [AuthController::class, 'process_security_question'])->name('auth.security_question_process');
 Route::get('/reset_password', [AuthController::class, 'reset_password'])->name('auth.reset_password');
-Route::post('/reset_password_process', [AuthController::class, 'process_reset_password'])->name('auth.reset_password_process');
+Route::post('/reset_password_process', [AuthController::class, 'reset_password_process'])->name('auth.reset_password_process');

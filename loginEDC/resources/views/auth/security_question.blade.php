@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | EduConnect</title>
+    <title>Lupa Password | EduConnect</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -137,6 +137,35 @@
             transform: translateX(-50px) scale(0.95);
             opacity: 0;
         }
+        .question-field {
+            width: 100%;
+            padding: 0.75rem 0;
+            margin-bottom: 1.5rem;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            font-size: 1rem;
+            background: transparent;
+            color: #555;
+        }
+        .security-question-text {
+            font-weight: bold;
+            border: none;
+            background: transparent;
+            font-size: 16px; /* Bisa diatur kalau mau lebih besar */
+            pointer-events: none; /* Biar benar-benar nggak bisa diklik */
+        }
+        .security-question-box {
+            display: block;
+            width: 80%;
+            padding: 10px 20px;
+            border: 2px solid #2563eb; /* border biru */
+            border-radius: 8px; /* biar rada membulat */
+            color: #2563eb; /* warna teks biru */
+            font-weight: bold;
+            font-size: 16px;
+            background-color: transparent;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -148,23 +177,18 @@
 
         <div class="right" id="right-panel">
             <div class="form-container" id="form-container">
-                <h2>Login</h2>
-                <form method="POST" action="{{ route('auth.login_process') }}">
+                <h2>Pertanyaan Keamanan</h2>
+                <form method="POST" action="{{ route('auth.security_question_process') }}">
                     @csrf
                     @if(session('message'))
                     <div class="alert" style="background-color: #f8d7da; color: #721c24; padding: 0.75rem; margin-bottom: 1rem; border-radius: 5px; font-size: 0.9rem;">
                         {{ session('message') }}
                     </div>
                     @endif
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="password" name="password" placeholder="Kata sandi" required>
+                    <input type="text" value="{{ $security_question }}" class="security-question-box" readonly>
+                    <input type="text" name="security_answer" placeholder="Masukkan jawaban anda" class="question-field" required>
 
-                    <div class="form-links">
-                        <a href="{{ route('auth.forgot_password') }}">Lupa Password?</a>
-                        <a href="{{ route('auth.register') }}" id="register-link">Belum punya akun?</a>
-                    </div>
-
-                    <button type="submit">Masuk</button>
+                    <button type="submit">Submit</button>
                 </form>
             </div>
         </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | EduConnect</title>
+    <title>Lupa Password | EduConnect</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -148,8 +148,8 @@
 
         <div class="right" id="right-panel">
             <div class="form-container" id="form-container">
-                <h2>Login</h2>
-                <form method="POST" action="{{ route('auth.login_process') }}">
+                <h2>Masukkan email Anda</h2>
+                <form method="POST" action="{{ route('auth.forgot_password_process') }}">
                     @csrf
                     @if(session('message'))
                     <div class="alert" style="background-color: #f8d7da; color: #721c24; padding: 0.75rem; margin-bottom: 1rem; border-radius: 5px; font-size: 0.9rem;">
@@ -157,14 +157,8 @@
                     </div>
                     @endif
                     <input type="email" name="email" placeholder="Email" required>
-                    <input type="password" name="password" placeholder="Kata sandi" required>
 
-                    <div class="form-links">
-                        <a href="{{ route('auth.forgot_password') }}">Lupa Password?</a>
-                        <a href="{{ route('auth.register') }}" id="register-link">Belum punya akun?</a>
-                    </div>
-
-                    <button type="submit">Masuk</button>
+                    <button type="submit">Submit</button>
                 </form>
             </div>
         </div>

@@ -14,46 +14,31 @@ class AuthController extends Controller
     return view('auth.login');
 }
 
-public function login_process(Request $request)
-{
-    $email = $request->input('email');
-    $password = $request->input('password');
+    public function login_process(Request $request)
+    {
+        $email = $request->input('email');
+        $password = $request->input('password');
 
-    // Admin credentials
-    $admin_email = "admin@gmail.com";
-    $admin_password = "lewy09";
+        // Cek apakah email terdaftar di database
+        $user = DB::table('penggunas')->where('email', $email)->first();
 
-    // Cek jika login sebagai admin
-    if ($email === $admin_email) {
-        if ($password === $admin_password) {
-            session(['admin' => true, 'login' => true]);
-            return redirect('dashboard_admin');
-        } else {
-            session()->flash('message', 'Password admin salah!');
+        if (!$user) {
+            // Email tidak terdaftar
+            session()->flash('message', 'Username atau password salah!');
             return redirect()->route('auth.login');
         }
+
+        // Cek password
+        if (!Hash::check($password, $user->password)) {
+            // Password salah
+            session()->flash('message', 'Username atau password salah!');
+            return redirect()->route('auth.login');
+        }
+
+        // Login berhasil
+        session(['user' => $user, 'login' => true]);
+        return redirect()->route('dashboard');
     }
-
-    // Cek apakah email terdaftar di database
-    $user = DB::table('penggunas')->where('email', $email)->first();
-
-    if (!$user) {
-        // Email tidak terdaftar
-        session()->flash('message', 'Email belum terdaftar!');
-        return redirect()->route('auth.login');
-    }
-
-    // Cek password
-    if (!Hash::check($password, $user->password)) {
-        // Password salah
-        session()->flash('message', 'Password yang Anda masukkan salah!');
-        return redirect()->route('auth.login');
-    }
-
-    // Login berhasil
-    session(['user' => $user, 'login' => true]);
-    return redirect()->route('dashboard');
-}
 
     public function register()
     {
@@ -171,21 +156,32 @@ public function login_process(Request $request)
         return view('auth.reset_password');
     }
 
-    public function process_reset_password(Request $request)
+    public function reset_password_process(Request $request)
     {
+        // Ambil user yang sedang login
+        $user = session('user');
+
+        if (!$user) {
+            // Kalau tidak ada user di sesi, redirect ke login
+            return redirect()->route('auth.login')->with('message', 'Session expired. Silakan login ulang.');
+        }
+
+        // Validasi password baru
         $request->validate([
-            'new_password' => 'required|string|min:6|confirmed',
+            'new_password' => 'required|string|min:8',
         ]);
 
-        $email = session('email');
-        $new_password = Hash::make($request->input('new_password'));
-
         // Update password di database
-        DB::table('penggunas')->where('email', $email)->update(['password' => $new_password]);
+        DB::table('penggunas')
+            ->where('email', $user->email)
+            ->update([
+                'password' => Hash::make($request->input('new_password')),
+            ]);
 
-        // Hapus session
-        $request->session()->forget(['email', 'security_question']);
+        // Hapus session login supaya dipaksa login ulang
+        session()->forget(['user', 'login']);
 
-        return redirect()->route('auth.login')->with('message', 'Password berhasil direset! Silakan login.');
+        // Redirect ke login page dengan pesan sukses
+        return redirect()->route('auth.login')->with('message', 'Password berhasil diubah! Silakan login kembali.');
     }
 }

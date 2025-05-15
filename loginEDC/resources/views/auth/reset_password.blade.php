@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | EduConnect</title>
+    <title>Lupa Password | EduConnect</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -22,7 +22,7 @@
             display: flex;
             width: 100%;
             height: 100%;
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.4s ease; /* Lebih cepat: 0.4s */
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.4s ease;
         }
         .left {
             flex: 1;
@@ -33,7 +33,7 @@
             justify-content: center;
             align-items: center;
             padding: 2rem;
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Lebih cepat: 0.3s */
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
         .left h1 {
             font-size: 48px;
@@ -54,12 +54,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease; /* Lebih cepat: 0.3s */
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
         }
         .form-container {
             width: 80%;
             max-width: 400px;
-            transition: transform 0.25s ease, opacity 0.25s ease; /* Lebih cepat: 0.25s */
+            transition: transform 0.25s ease, opacity 0.25s ease;
         }
         .form-container h2 {
             margin-bottom: 1.5rem;
@@ -117,7 +117,7 @@
             background-color: #1e40af;
         }
         
-        /* Animasi yang lebih cepat */
+        /* Animasi */
         .animate-out {
             transform: translateX(-100%) rotateY(10deg);
             opacity: 0;
@@ -137,6 +137,25 @@
             transform: translateX(-50px) scale(0.95);
             opacity: 0;
         }
+
+        /* Error styles */
+        .alert {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #f87171;
+        }
+        
+        .error-message {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -148,56 +167,31 @@
 
         <div class="right" id="right-panel">
             <div class="form-container" id="form-container">
-                <h2>Login</h2>
-                <form method="POST" action="{{ route('auth.login_process') }}">
+                <h2>Masukkan kata sandi baru</h2>
+                
+                @if(session('message'))
+                <div class="alert">
+                    {{ session('message') }}
+                </div>
+                @endif
+                
+                <form method="POST" action="{{ route('auth.reset_password_process') }}">
                     @csrf
-                    @if(session('message'))
-                    <div class="alert" style="background-color: #f8d7da; color: #721c24; padding: 0.75rem; margin-bottom: 1rem; border-radius: 5px; font-size: 0.9rem;">
-                        {{ session('message') }}
-                    </div>
-                    @endif
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="password" name="password" placeholder="Kata sandi" required>
-
+                    <input type="password" name="new_password" placeholder="Kata sandi baru" required>
+                    @error('new_password')
+                    <span class="error-message">{{ $message }}</span>
+                    @enderror
+                    
+                    <input type="password" name="new_password_confirmation" placeholder="Konfirmasi kata sandi baru" required>
+                    
                     <div class="form-links">
-                        <a href="{{ route('auth.forgot_password') }}">Lupa Password?</a>
-                        <a href="{{ route('auth.register') }}" id="register-link">Belum punya akun?</a>
+                        <a href="{{ route('auth.login') }}">Kembali ke halaman login</a>
                     </div>
-
-                    <button type="submit">Masuk</button>
+                    <button type="submit">Simpan</button>
                 </form>
+                
             </div>
         </div>
     </div>
-
-    <script>
-        // Script untuk animasi yang lebih cepat
-        document.getElementById('register-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Simpan URL tujuan
-            const targetUrl = this.getAttribute('href');
-            
-            // Animasi elemen secara berurutan dengan timing yang lebih cepat
-            const formContainer = document.getElementById('form-container');
-            const rightPanel = document.getElementById('right-panel');
-            const leftPanel = document.getElementById('left-panel');
-            const pageWrapper = document.getElementById('page-wrapper');
-            
-            // Animasi semua elemen hampir bersamaan untuk kesan lebih cepat
-            formContainer.classList.add('animate-out');
-            
-            setTimeout(() => {
-                rightPanel.classList.add('animate-out');
-                leftPanel.classList.add('animate-out');
-                pageWrapper.classList.add('animate-out');
-            }, 60); // Waktu delay sangat singkat
-            
-            // Pindah halaman lebih cepat
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 30); // Total durasi animasi hanya 400ms
-        });
-    </script>
 </body>
 </html>

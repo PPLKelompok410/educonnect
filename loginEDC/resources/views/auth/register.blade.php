@@ -141,6 +141,15 @@
             margin-bottom: 0.5rem;
         }
         
+        .success-message {
+            background-color: #d1fae5;
+            border-left: 4px solid #10b981;
+            color: #065f46;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+        }
+
         .error-message {
             color: #ef4444;
             font-size: 0.8rem;
@@ -150,36 +159,6 @@
     </style>
 </head>
 <body>
-    @if (session('message'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Selamat! Kamu sudah terdaftar',
-                text: '{{ session("message") }}',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "{{ route('auth.login') }}";
-                }
-            });
-        });
-    </script>
-    @endif
-    
-    @if ($errors->any())
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Error!',
-                html: '@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        });
-    </script>
-    @endif
-
     <div class="left">
         <h1>EduConnect</h1>
         <p>Connect. Share. Grow.</p>
@@ -188,7 +167,19 @@
         <div class="form-container">
             <form action="{{ route('auth.register_process') }}" method="POST" id="registrationForm">
                 @csrf
+            
                 <h2>Registrasi</h2>
+                @if (session('success'))
+                <div class="success-message">
+                    {{ session('success') }}
+                </div>
+                @endif
+        
+                @if (session('error'))
+                <div class="error-message">
+                    {{ session('error') }}
+                </div>
+                @endif
                 
                 <div class="field-group">
                     <input type="text" name="full_name" placeholder="Masukkan nama lengkap" required value="{{ old('full_name') }}">
