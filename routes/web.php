@@ -5,6 +5,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NoteCommentController;
+use App\Http\Controllers\ProfilController;
 
 // Page Galeri Matkul (Home)
 Route::get('/', [MataKuliahController::class, 'index']);
@@ -38,3 +39,11 @@ Route::get('/notes/{note}', [NoteController::class, 'show'])->name('notes.show')
 Route::post('/notes/{note}/comments', [NoteCommentController::class, 'store'])->name('note-comments.store');
 Route::put('/note-comments/{comment}', [NoteCommentController::class, 'update'])->name('note-comments.update');
 Route::delete('/note-comments/{comment}', [NoteCommentController::class, 'destroy'])->name('note-comments.destroy');
+
+Route::get('profiles', [ProfilController::class, 'index'])->name('profiles.index');
+Route::get('profiles/create', [ProfilController::class, 'create'])->name('profiles.create');
+Route::post('profiles', [ProfilController::class, 'store'])->name('profiles.store');
+Route::get('profiles/{profile}', [ProfilController::class, 'show'])->name('profiles.show');
+Route::get('profiles/{profile}/edit', [ProfilController::class, 'edit'])->name('profiles.edit');
+Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('profiles.update');
+Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
