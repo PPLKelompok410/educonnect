@@ -30,5 +30,10 @@ class Note extends Model
 {
     return $this->belongsTo(MataKuliah::class);
 }
+
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
 }
 

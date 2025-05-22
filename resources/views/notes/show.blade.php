@@ -112,3 +112,11 @@
     </div>
 </div>
 @endsection
+
+<!-- Tambahkan di bagian yang sesuai -->
+<form action="{{ route('bookmarks.store', $note) }}" method="POST" class="inline">
+    @csrf
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        Bookmark Note
+    </button>
+</form>

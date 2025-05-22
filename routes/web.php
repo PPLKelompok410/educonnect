@@ -8,6 +8,7 @@ use App\Http\Controllers\NoteCommentController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TopContributorsController;
+use App\Http\Controllers\BookmarkController;
 
 
 Route::view('/', 'welcome')->name('welcome');
@@ -67,3 +68,8 @@ Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('pro
 Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
 
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
+
+// Bookmark routes
+Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+Route::post('/notes/{note}/bookmark', [BookmarkController::class, 'store'])->name('bookmarks.store');
+Route::delete('/bookmarks/{bookmark}', [BookmarkController::class, 'destroy'])->name('bookmarks.destroy');
