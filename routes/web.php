@@ -7,6 +7,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NoteCommentController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TopContributorsController;
 
 
 Route::view('/', 'welcome')->name('welcome');
@@ -64,3 +65,5 @@ Route::get('profiles/{profile}', [ProfilController::class, 'show'])->name('profi
 Route::get('profiles/{profile}/edit', [ProfilController::class, 'edit'])->name('profiles.edit');
 Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('profiles.update');
 Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
+
+Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
