@@ -10,12 +10,13 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-    {
-        Schema::table('notes', function (Blueprint $table) {
-            $table->unsignedBigInteger('matkul_id')->after('user_id')->nullable();
-            $table->foreign('matkul_id')->references('id')->on('mata_kuliahs')->onDelete('cascade');
-        });
-    }
+        {
+            Schema::table('notes', function (Blueprint $table) {
+                if (!Schema::hasColumn('notes', 'matkul_id')) {
+                    $table->unsignedBigInteger('matkul_id')->nullable()->after('user_id');
+                }
+            });
+        }
 
     /**
      * Reverse the migrations.

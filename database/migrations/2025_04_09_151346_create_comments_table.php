@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('matkul_id');
-            $table->unsignedBigInteger('user_id');
-            $table->text('comment');
-            $table->timestamps();
-    
-            // Foreign Key Constraints
-            $table->foreign('matkul_id')->references('id')->on('mata_kuliahs')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+        if (!Schema::hasTable('comments')) {
+            Schema::create('comments', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('matkul_id');
+                $table->unsignedBigInteger('user_id');
+                $table->text('comment');
+                $table->timestamps();
+        
+                // Foreign Key Constraints
+                $table->foreign('matkul_id')->references('id')->on('mata_kuliahs')->onDelete('cascade');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
     }
     
     public function down()
