@@ -1,8 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Session;
+use App\Models\Pengguna;
 
-abstract class Controller
+class Controller
 {
-    //
+
+    protected function currentUser()
+    {
+        $userId = Session::get('user_id');
+        if ($userId) {
+            return Pengguna::find($userId);
+        }
+        return null;
+    }
 }

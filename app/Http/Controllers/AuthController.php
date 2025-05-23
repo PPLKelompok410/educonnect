@@ -6,13 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
-class AuthController extends Controller
+class AuthController
 {
     public function login()
-{
-    return view('auth.login');
-}
+    {
+        return view('auth.login');
+    }
 
     public function login_process(Request $request)
     {
@@ -47,11 +48,11 @@ class AuthController extends Controller
 
     public function register_process(Request $request)
     {
-        \Log::info('Register process initiated');
+        Log::info('Register process initiated');
 
         // Tambahkan log untuk debugging password dan password_confirmation
-        \Log::info('Password:', ['password' => $request->input('password')]);
-        \Log::info('Password Confirmation:', ['password_confirmation' => $request->input('password_confirmation')]);
+        Log::info('Password:', ['password' => $request->input('password')]);
+        Log::info('Password Confirmation:', ['password_confirmation' => $request->input('password_confirmation')]);
 
         // Validasi input
         $data = $request->validate([
@@ -68,7 +69,7 @@ class AuthController extends Controller
             'email.unique' => 'Email sudah terdaftar. Gunakan email lain.', // Pesan tambahan
         ]);
 
-        \Log::info('Validation passed', $data);
+        Log::info('Validation passed', $data);
 
         // Hash password
         $data['password'] = Hash::make($data['password']);
@@ -76,9 +77,9 @@ class AuthController extends Controller
         // Simpan ke database
         try {
             DB::table('penggunas')->insert($data);
-            \Log::info('User successfully registered');
+            Log::info('User successfully registered');
         } catch (\Exception $e) {
-            \Log::error('Error during registration: ' . $e->getMessage());
+            Log::error('Error during registration: ' . $e->getMessage());
             session()->flash('message', 'Terjadi kesalahan saat registrasi.');
             return redirect()->route('auth.register');
         }
@@ -87,8 +88,8 @@ class AuthController extends Controller
         return redirect()->route('auth.login');
     }
 
-     // Menampilkan halaman lupa password
-     public function forgot_password(Request $request)
+    // Menampilkan halaman lupa password
+    public function forgot_password(Request $request)
     {
         return view('auth.forgot_password');
     }
