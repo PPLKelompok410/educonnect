@@ -8,7 +8,8 @@ use App\Http\Controllers\NoteCommentController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TopContributorsController;
-
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\AdminEventController;
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/dashboard', 'dashboard')->name('dashboard');
@@ -67,3 +68,15 @@ Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('pro
 Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
 
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
+
+
+Route::get('/admin/event', [AdminEventController::class, 'index'])->name('admin.index');
+Route::get('/admin/event/create', [AdminEventController::class, 'create'])->name('admin.create');
+Route::post('/admin/event', [AdminEventController::class, 'store'])->name('admin.store');
+Route::get('/admin/event/{event}', [AdminEventController::class, 'show'])->name('admin.show');
+Route::get('/admin/event/{event}/edit', [AdminEventController::class, 'edit'])->name('admin.edit');
+Route::put('/admin/event/{event}', [AdminEventController::class, 'update'])->name('admin.update');
+Route::delete('/admin/event/{event}', [AdminEventController::class, 'destroy'])->name('admin.destroy');
+
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.detail');
