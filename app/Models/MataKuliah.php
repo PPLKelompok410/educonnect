@@ -20,9 +20,9 @@ class MataKuliah extends Model
         return $this->hasMany(Comment::class, 'matkul_id'); // foreign key-nya sesuai
     }
 
-     // Menambahkan relasi dengan user jika diperlukan
+    // Menambahkan relasi dengan user jika diperlukan
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Pengguna::class);
     }
 }

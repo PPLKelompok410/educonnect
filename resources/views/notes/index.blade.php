@@ -31,7 +31,7 @@
 
                 {{-- Info Pengguna --}}
                 <p class="text-sm text-gray-600 mb-1">
-                    Dibagikan oleh: <strong>{{ $note->user->name }}</strong>
+                    Dibagikan oleh: <strong>{{ $note->user->full_name }}</strong>
                 </p>
 
                 <p class="text-xs text-gray-500 mb-3">

@@ -28,7 +28,7 @@
         <p class="text-gray-800 mb-3">{{ $comment->comment }}</p>
         <div class="flex justify-between items-center text-sm text-gray-500">
             <span>
-                oleh <strong class="text-gray-700">{{ $comment->user->name }}</strong>
+                oleh <strong class="text-gray-700">{{ $comment->user->full_name }}</strong>
                 pada {{ $comment->created_at->format('d M Y, H:i') }}
             </span>
 
@@ -63,7 +63,6 @@
         <form action="{{ route('comments.store', $matkul->id) }}" method="POST" class="mt-4">
             @csrf
             <div class="mb-4">
-                <label for="comment" class="block mb-1 text-sm font-medium text-gray-700">Topik Diskusi</label>
                 <textarea name="comment" id="comment" rows="3"
                     class="w-full p-3 border border-gray-300 rounded-md focus:ring focus:ring-green-200 focus:outline-none"
                     placeholder="Tulis topikmu..." required></textarea>

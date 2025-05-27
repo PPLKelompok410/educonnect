@@ -66,7 +66,7 @@
 
 
     <!-- Logout -->
-    <div class="p-4 border-t border-gray-200">
+    <!-- <div class="p-4 border-t border-gray-200">
       <form action="{{ route('auth.login') }}" method="GET">
         @csrf
         <button type="submit" class="flex items-center text-red-600 hover:text-red-800 transition">
@@ -77,6 +77,6 @@
           <span x-show="open" class="ml-3">Logout</span>
         </button>
       </form>
-    </div>
+    </div> -->
   </div>
 </div>

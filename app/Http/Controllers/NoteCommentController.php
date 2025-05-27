@@ -16,7 +16,7 @@ class NoteCommentController
 
         NoteComment::create([
             'note_id' => $noteId,
-            'user_id' => 1,
+            'user_id' => session('user')->id,
             'content' => $request->content,
         ]);
 
