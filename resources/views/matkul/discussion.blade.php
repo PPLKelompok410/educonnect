@@ -3,63 +3,74 @@
 @section('title', 'Forum Diskusi (' . $matkul->nama . ')')
 
 @section('content')
-<div class="container px-3 px-md-5 mt-5">
-    <div class="border rounded p-4 mb-4 bg-light shadow-sm">
-        <h2 class="mb-2">
-            <i class="bi bi-chat-dots"></i> Forum Diskusi: 
-            <span class="text-primary">{{ $matkul->nama }}</span>
+<div class="container mx-auto px-4 md:px-10 mt-10">
+    <div class="border rounded-xl p-6 mb-6 bg-gray-100 shadow">
+        <h2 class="text-2xl font-semibold mb-2 flex items-center gap-2">
+            <i class="bi bi-chat-dots"></i>
+            Forum Diskusi: <span class="text-blue-600">{{ $matkul->nama }}</span>
         </h2>
-        <p class="mb-0 text-muted">
-            <i class="bi bi-journal-code"></i> Kode: {{ $matkul->kode }} | 
-            <i class="bi bi-building"></i> Prodi: {{ $matkul->prodi }}
+        <p class="text-sm text-gray-600 flex items-center gap-4">
+            <span class="flex items-center gap-1">
+                <i class="bi bi-journal-code"></i> Kode: {{ $matkul->kode }}
+            </span>
+            <span class="flex items-center gap-1">
+                <i class="bi bi-building"></i> Prodi: {{ $matkul->prodi }}
+            </span>
         </p>
     </div>
 
-    <h4 class="mb-3"><i class="bi bi-chat-left-text"></i> Komentar</h4>
+    <h4 class="text-xl font-semibold mb-4 flex items-center gap-2">
+        <i class="bi bi-chat-left-text"></i> Topik Diskusi
+    </h4>
 
     @forelse($matkul->comments as $comment)
-        <div class="card mb-3 shadow-sm">
-            <div class="card-body">
-                <p class="card-text">{{ $comment->comment }}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        oleh <strong>{{ $comment->user->name }}</strong> pada {{ $comment->created_at->format('d M Y, H:i') }}
-                    </small>
+    <div class="bg-white border rounded-xl shadow p-4 mb-4">
+        <p class="text-gray-800 mb-3">{{ $comment->comment }}</p>
+        <div class="flex justify-between items-center text-sm text-gray-500">
+            <span>
+                oleh <strong class="text-gray-700">{{ $comment->user->name }}</strong>
+                pada {{ $comment->created_at->format('d M Y, H:i') }}
+            </span>
 
-                    {{-- @if(Auth::id() === $comment->user_id) --}}
-                        <div>
-                            <a href="{{ route('comments.edit', $comment->id) }}" class="btn btn-sm btn-outline-primary me-2">
-                                <i class="bi bi-pencil-square"></i> Edit
-                            </a>
-
-                            <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin hapus komentar ini?')">
-                                    <i class="bi bi-trash"></i> Hapus
-                                </button>
-                            </form>
-                        </div>
-                    {{-- @endif --}}
-                </div>
+            {{-- @if(Auth::id() === $comment->user_id) --}}
+            <div class="flex gap-2">
+                <a href="{{ route('comments.edit', $comment->id) }}"
+                    class="px-3 py-1 border border-blue-500 text-blue-500 text-sm rounded hover:bg-blue-100 transition">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" onsubmit="return confirm('Yakin hapus komentar ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                        class="px-3 py-1 border border-red-500 text-red-500 text-sm rounded hover:bg-red-100 transition">
+                        <i class="bi bi-trash"></i> Hapus
+                    </button>
+                </form>
             </div>
+            {{-- @endif --}}
         </div>
+    </div>
     @empty
-        <p class="text-muted">💬 Belum ada komentar. Jadilah yang pertama!</p>
+    <p class="text-gray-500">💬 Belum ada topik diskusi. Jadilah yang pertama!</p>
     @endforelse
 
-    <hr>
+    <hr class="my-8 border-gray-300">
 
-    <div class="mt-4">
-        <h4><i class="bi bi-plus-circle"></i> Tambah Komentar</h4>
-        <form action="{{ route('comments.store', $matkul->id) }}" method="POST" class="mt-3">
+    <div class="mt-6">
+        <h4 class="text-xl font-semibold flex items-center gap-2">
+            <i class="bi bi-plus-circle"></i> Tambah Topik Diskusi
+        </h4>
+        <form action="{{ route('comments.store', $matkul->id) }}" method="POST" class="mt-4">
             @csrf
-            <div class="mb-3">
-                <label for="comment" class="form-label">Komentar</label>
-                <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Tulis komentarmu..." required></textarea>
+            <div class="mb-4">
+                <label for="comment" class="block mb-1 text-sm font-medium text-gray-700">Topik Diskusi</label>
+                <textarea name="comment" id="comment" rows="3"
+                    class="w-full p-3 border border-gray-300 rounded-md focus:ring focus:ring-green-200 focus:outline-none"
+                    placeholder="Tulis topikmu..." required></textarea>
             </div>
-            <button type="submit" class="btn btn-success">
-                <i class="bi bi-send"></i> Kirim Komentar
+            <button type="submit"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                <i class="bi bi-send"></i> Kirim
             </button>
         </form>
     </div>
