@@ -61,19 +61,25 @@ $currentUser = session('user');
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow text-sm">Kirim</button>
         </form>
 
-        @if ($note->rating)
+        @if ($note->rating && $note->rating > 0)
         <div class="mt-4">
-            <p class="text-sm text-gray-600">Rating saat ini:
+            <p class="text-sm text-gray-600">
+                Rating saat ini:
                 @for ($i = 1; $i <= 5; $i++)
                     @if ($i <=$note->rating)
-                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="bi bi-star-fill text-warning"></i>
                     @else
-                    <i class="far fa-star text-yellow-400"></i>
+                    <i class="bi bi-star text-warning"></i>
                     @endif
                     @endfor
             </p>
         </div>
+        @else
+        <div class="mt-4">
+            <p class="text-sm text-gray-500">Belum ada rating</p>
+        </div>
         @endif
+
     </div>
 
     {{-- Komentar --}}
