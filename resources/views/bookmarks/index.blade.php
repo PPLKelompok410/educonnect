@@ -47,6 +47,12 @@ function toggleBookmark(noteId, button) {
         if (data.status === 'removed') {
             // Remove the entire bookmark card from view
             button.closest('.bg-white').remove();
+            Swal.fire({
+                icon: 'success',
+                title: 'Bookmark berhasil dihapus!',
+                showConfirmButton: false,
+                timer: 1500
+            });
         }
     });
 }
