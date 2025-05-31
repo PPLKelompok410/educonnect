@@ -18,7 +18,7 @@ class Note extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Pengguna::class, 'user_id'); // user_id kolom foreign key ke pengguna.id
     }
 
     public function comments()
@@ -27,13 +27,12 @@ class Note extends Model
     }
 
     public function matkul()
-{
-    return $this->belongsTo(MataKuliah::class);
-}
+    {
+        return $this->belongsTo(MataKuliah::class);
+    }
 
     public function bookmarks()
     {
         return $this->hasMany(Bookmark::class);
     }
 }
-

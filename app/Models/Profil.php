@@ -10,13 +10,17 @@ class Profil extends Model
     protected $table = 'profiles';
 
     protected $fillable = [
-       'name', 'email', 'phone_number', 'address', 'bio'
+        'name',
+        'email',
+        'phone_number',
+        'address',
+        'bio'
     ];
 
     public $timestamps = true;
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
     }
 }

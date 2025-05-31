@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Bookmark;
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookmarkController extends Controller
 {
     public function index()
     {
-        $bookmarks = Bookmark::with(['note.user', 'note.matkul'])
+        $bookmarks = Bookmark::with('note.user')
             ->where('user_id', session('user')->id)
             ->latest()
             ->get();
@@ -18,25 +19,26 @@ class BookmarkController extends Controller
         return view('bookmarks.index', compact('bookmarks'));
     }
 
-    public function store(Note $note)
+    public function toggle(Note $note)
     {
-        $userId = session('user')->id;
-        
-        $bookmark = Bookmark::firstOrCreate([
-            'user_id' => $userId,
+        $user_id = session('user')->id;
+        $bookmark = Bookmark::where('user_id', $user_id)
+            ->where('note_id', $note->id)
+            ->first();
+
+        if ($bookmark) {
+            // Hapus bookmark
+            $bookmark->delete();
+            return response()->json(['status' => 'removed']);
+        }
+
+        // Tambah bookmark
+        Bookmark::create([
+            'user_id' => $user_id,
             'note_id' => $note->id
         ]);
 
-        return redirect()->back()->with('success', 'Note berhasil ditambahkan ke bookmark.');
+        return response()->json(['status' => 'added']);
     }
 
-    public function destroy(Bookmark $bookmark)
-    {
-        if ($bookmark->user_id !== session('user')->id) {
-            return redirect()->back()->with('error', 'Unauthorized action.');
-        }
-
-        $bookmark->delete();
-        return redirect()->back()->with('success', 'Note berhasil dihapus dari bookmark.');
-    }
 }

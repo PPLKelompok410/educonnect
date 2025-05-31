@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('note_comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('note_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('note_id');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('note_id')->references('id')->on('notes')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('penggunas')->onDelete('cascade');
             $table->text('content');
             $table->timestamps();
         });

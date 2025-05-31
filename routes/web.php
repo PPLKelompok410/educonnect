@@ -27,7 +27,7 @@ Route::get('/reset_password', [AuthController::class, 'reset_password'])->name('
 Route::post('/reset_password_process', [AuthController::class, 'reset_password_process'])->name('auth.reset_password_process');
 
 // Page Galeri Matkul 
-Route::get('/matkul', [MataKuliahController::class, 'index']);
+Route::get('/matkul', [MataKuliahController::class, 'index'])->name('matkul.index');
 Route::get('/matkul/manage', [MataKuliahController::class, 'manage'])->name('matkul.manage');
 Route::get('/matkul/create', [MataKuliahController::class, 'create'])->name('matkul.create');
 Route::post('/matkul', [MataKuliahController::class, 'store'])->name('matkul.store');
@@ -68,8 +68,6 @@ Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('pro
 Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
 
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
-
 // Bookmark routes
 Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
-Route::post('/notes/{note}/bookmark', [BookmarkController::class, 'store'])->name('bookmarks.store');
-Route::delete('/bookmarks/{bookmark}', [BookmarkController::class, 'destroy'])->name('bookmarks.destroy');
+Route::post('/bookmarks/toggle/{note}', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');

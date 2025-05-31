@@ -12,7 +12,7 @@ class MataKuliahController
     {
         $mataKuliah = MataKuliah::all();
         $prodis = MataKuliah::select('prodi')->distinct()->pluck('prodi');
-        
+
         return view('matkul.galleryMatkul', compact('mataKuliah', 'prodis'));
     }
 
@@ -24,7 +24,7 @@ class MataKuliahController
 
     public function manage()
     {
-        $mataKuliah = MataKuliah::all(); 
+        $mataKuliah = MataKuliah::all();
         return view('matkul.manage', compact('mataKuliah'));
     }
 
@@ -66,16 +66,16 @@ class MataKuliahController
     public function update(Request $request, $id)
     {
         $matkul = MataKuliah::findOrFail($id);
-    
+
         $request->validate([
             'nama' => 'required',
             'kode' => 'required|unique:mata_kuliahs,kode,' . $id,
             'prodi' => 'required',
             'gambar' => 'nullable|image|max:2048',
         ]);
-    
+
         $data = $request->only(['nama', 'kode', 'prodi']);
-    
+
         if ($request->hasFile('gambar')) {
             if ($matkul->gambar) {
                 Storage::delete('public/sampul/' . $matkul->gambar);
@@ -86,9 +86,9 @@ class MataKuliahController
             $data['gambar'] = $filename;
             Storage::disk('public')->putFileAs('sampul', $file, $filename);
         }
-    
+
         $matkul->update($data);
-    
+
         return redirect()->route('matkul.manage')->with('success', 'Mata kuliah berhasil diperbarui');
     }
 

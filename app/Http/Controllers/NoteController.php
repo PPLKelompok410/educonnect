@@ -6,16 +6,17 @@ use App\Models\Note;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
-class NoteController extends Controller
+class NoteController
 {
     public function index(MataKuliah $matkul)
     {
-        $notes = Note::with('user')
-                    ->where('matkul_id', $matkul->id)
-                    ->where('type', 'galeri') 
-                    ->latest()
-                    ->get();
+        $notes = Note::with(['user', 'bookmarks']) // tambahkan 'bookmarks'
+            ->where('matkul_id', $matkul->id)
+            ->where('type', 'galeri')
+            ->latest()
+            ->get();
 
         return view('notes.index', compact('notes', 'matkul'));
     }
@@ -29,13 +30,13 @@ class NoteController extends Controller
     {
         $request->validate([
             'judul' => 'required|string|max:255',
-            'file' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'file_path' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $filePath = $request->file('file')->store('catatan', 'public');
+        $filePath = $request->file('file_path')->store('catatan', 'public');
 
         Note::create([
-            'user_id' => 1,
+            'user_id' => session('user')->id,
             'judul' => $request->judul,
             'file_path' => $filePath,
             'matkul_id' => $matkul->id,
@@ -47,8 +48,8 @@ class NoteController extends Controller
 
     public function show($id)
     {
-        $note = Note::findOrFail($id);  
-        return view('notes.show', compact('note')); 
+        $note = Note::findOrFail($id);
+        return view('notes.show', compact('note'));
     }
 
     public function edit(Note $note)
@@ -78,8 +79,8 @@ class NoteController extends Controller
     public function destroy(Note $note)
     {
         // Hapus file catatan jika ada
-        if ($note->file_path && \Storage::exists($note->file_path)) {
-            \Storage::delete($note->file_path);
+        if ($note->file_path && Storage::disk('public')->exists($note->file_path)) {
+            Storage::disk('public')->delete($note->file_path);
         }
 
         // Hapus catatan dari database
