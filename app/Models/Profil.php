@@ -6,17 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profil extends Model
 {
-
     protected $table = 'profiles';
 
     protected $fillable = [
-       'name', 'email', 'phone_number', 'address', 'bio'
+        'pengguna_id', 'phone_number', 'address', 'bio'
     ];
 
     public $timestamps = true;
 
-    public function user()
+    public function pengguna()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
     }
 }
+

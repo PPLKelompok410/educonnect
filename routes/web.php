@@ -8,10 +8,20 @@ use App\Http\Controllers\NoteCommentController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TopContributorsController;
-
+use App\Http\Controllers\PaymentController;
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/dashboard', 'dashboard')->name('dashboard');
+
+// Admin Dashboard Route
+Route::get('/admin/dashboard', function () {
+    // Cek apakah user sudah login dan merupakan admin
+    if (!session()->has('login') || !session('is_admin')) {
+        return redirect()->route('auth.login')->with('message', 'Akses ditolak.');
+    }
+
+    return view('admin.dashboard');
+})->name('admin.dashboard');
 
 Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/login_process', [AuthController::class, 'login_process'])->name('auth.login_process');
@@ -67,3 +77,20 @@ Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('pro
 Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
 
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
+
+
+Route::get('/payment', [PaymentController::class, 'index'])->name('payments.index');
+Route::get('/payment/create', [PaymentController::class, 'create'])->name('payments.create');
+Route::post('/payment', [PaymentController::class, 'store'])->name('payments.store');
+Route::get('/payment/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+Route::get('/payment/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
+Route::put('/payment/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+Route::delete('/payment/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+
+Route::get('/upgrade-plans', [PaymentController::class, 'showPlans'])->name('upgrade.plans');
+Route::get('/checkout/{plan}', [PaymentController::class, 'checkout'])->name('upgrade.checkout');
+Route::post('/process-payment/{plan}', [PaymentController::class, 'processPayment'])->name('upgrade.process-payment');
+Route::get('/payment/receipt/{transaction}', [PaymentController::class, 'downloadReceipt'])->name('payments.receipt');
+Route::get('/payment/success/{transaction}', [PaymentController::class, 'showSuccess'])->name('payments.success');
+Route::delete('/subscription/cancel', [PaymentController::class, 'cancelSubscription'])->name('subscription.cancel');
+

@@ -19,6 +19,20 @@ class AuthController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
+        // Cek jika login sebagai admin statis
+        if ($email === 'admin@gmail.com' && $password === 'admin123') {
+            // Buat session untuk admin
+            session([
+                'user' => (object)[
+                    'email' => $email,
+                    'full_name' => 'Administrator'
+                ],
+                'login' => true,
+                'is_admin' => true,
+            ]);
+            return redirect()->route('admin.dashboard');
+        }
+
         // Cek apakah email terdaftar di database
         $user = DB::table('penggunas')->where('email', $email)->first();
 

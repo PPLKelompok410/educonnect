@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profil;
+use App\Models\Pengguna;
 use Illuminate\Http\Request;
 
 class ProfilController extends Controller
@@ -12,11 +13,15 @@ class ProfilController extends Controller
      */
     public function index()
     {
-        // Retrieve all profiles from the database
-        $profiles = Profil::all();
+        $user = Pengguna::find(session('user')->id);
 
-        // Return the view with the profiles data
-        return view('profiles.index', compact('profiles'));
+        // Ubah dari firstOrNew ke firstOrCreate
+        $profile = Profil::firstOrCreate(
+            ['pengguna_id' => $user->id],
+            ['phone_number' => null, 'address' => null, 'bio' => null]
+        );
+
+        return view('profiles.index', compact('profile', 'user'));
     }
 
     /**
@@ -33,26 +38,25 @@ class ProfilController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the incoming request data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:profiles,email',
-            'phone_number' => 'nullable|string|max:15',
-            'address' => 'nullable|string',
-            'bio' => 'nullable|string',
+        $validatedData = $request->validate([
+            'bio' => 'required|string|max:200',
+            'address' => 'required|string',
+            'phone_number' => 'required|string',
         ]);
 
-        // Create a new profile using the validated data
-        Profil::create($request->all());
-
-        // Redirect to the profile index page with a success message
-        return redirect()->route('profiles.index')->with('success', 'Profile created successfully.');
+        try {
+            $validatedData['pengguna_id'] = session('user')->id;
+            Profil::create($validatedData);
+            return redirect()->route('profiles.index')->with('success', 'Biodata berhasil ditambahkan.');
+        } catch (QueryException $e) {
+            return redirect()->back()->with('error');
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Profil $profile)
     {
         // Retrieve the profile by its ID
         $profile = Profil::findOrFail($id);
@@ -64,51 +68,75 @@ class ProfilController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        // Retrieve the profile by its ID
-        $profile = Profil::findOrFail($id);
-
-        // Return the form view for editing the profile
-        return view('profiles.edit', compact('profile'));
+        $user = Pengguna::find(session('user')->id);
+        $profile = Profil::firstOrNew(['pengguna_id' => $user->id]);
+        return view('profiles.edit', compact('user','profile'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Profil $profile)
     {
-        // Validate the incoming request data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:profiles,email,' . $id,
+        $user = Pengguna::find(session('user')->id);
+
+        $validatedData = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'bio' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
             'phone_number' => 'nullable|string|max:15',
-            'address' => 'nullable|string',
-            'bio' => 'nullable|string',
         ]);
 
-        // Find the profile by ID
-        $profile = Profil::findOrFail($id);
+        try {
+            // Update user data
+            $user->update([
+                'full_name' => $validatedData['full_name'],
+            ]);
 
-        // Update the profile with the validated data
-        $profile->update($request->all());
+            // Update or create profile
+            $profile = Profil::updateOrCreate(
+                ['pengguna_id' => $user->id],
+                [
+                    'bio' => $validatedData['bio'] ?? '-',
+                    'address' => $validatedData['address'] ?? '-',
+                    'phone_number' => $validatedData['phone_number'] ?? '-',
+                ]
+            );
 
-        // Redirect to the profile index page with a success message
-        return redirect()->route('profiles.index')->with('success', 'Profile updated successfully.');
+            session()->put('user', $user);
+            return redirect()->route('profiles.index')->with('success', 'Profil berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui profil.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Profil $profile)
     {
-        // Find the profile by ID
-        $profile = Profil::findOrFail($id);
-
-        // Delete the profile
-        $profile->delete();
-
-        // Redirect to the profile index page with a success message
-        return redirect()->route('profiles.index')->with('success', 'Profile deleted successfully.');
+        try {
+            // Get the currently logged in user
+            $user = Pengguna::find(session('user')->id);
+            
+            if (!$user) {
+                return redirect()->back()->with('error', 'User tidak ditemukan.');
+            }
+    
+            // Delete associated profile first (due to foreign key constraint)
+            Profil::where('pengguna_id', $user->id)->delete();
+            
+            // Delete the user
+            $user->delete();
+            
+            // Clear the session
+            session()->forget('user');
+            
+            return redirect()->route('landing')->with('success', 'Akun berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus akun. ' . $e->getMessage());
+        }
     }
 }
