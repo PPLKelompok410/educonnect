@@ -1,5 +1,12 @@
+@extends('layouts.app')
+
+@section('title', 'Catatan')
+
+@section('content')
+
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,12 +24,14 @@
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         .header {
@@ -69,8 +78,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .header-actions {
@@ -102,7 +118,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -391,6 +407,7 @@
                 opacity: 0;
                 transform: translateX(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -417,8 +434,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
         }
 
         .empty-state h3 {
@@ -455,7 +479,8 @@
             transition: all 0.3s ease;
         }
 
-        .page-btn:hover, .page-btn.active {
+        .page-btn:hover,
+        .page-btn.active {
             background: #2563eb;
             border-color: #2563eb;
             color: white;
@@ -528,17 +553,20 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -557,10 +585,10 @@
 
         <!-- Alert Messages -->
         @if(session('success'))
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                {{ session('success') }}
-            </div>
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            {{ session('success') }}
+        </div>
         @endif
 
         <!-- Main Content -->
@@ -574,101 +602,101 @@
 
             <div class="event-grid">
                 @if($events->count() > 0)
-                    @foreach($events as $event)
-                        <div class="event-item" data-event-title="{{ strtolower($event->title) }}" data-event-description="{{ strtolower($event->description) }}">
-                            <div class="event-row">
-                                <div class="event-image-container">
-                                    @if($event->image)
-                                        <img src="{{ asset('storage/' . $event->image) }}" 
-                                             alt="{{ $event->title }}" 
-                                             class="event-image">
-                                    @else
-                                        <div class="no-image-placeholder">
-                                            <i class="fas fa-image"></i>
-                                        </div>
-                                    @endif
-                                </div>
+                @foreach($events as $event)
+                <div class="event-item" data-event-title="{{ strtolower($event->title) }}" data-event-description="{{ strtolower($event->description) }}">
+                    <div class="event-row">
+                        <div class="event-image-container">
+                            @if($event->image)
+                            <img src="{{ asset('storage/' . $event->image) }}"
+                                alt="{{ $event->title }}"
+                                class="event-image">
+                            @else
+                            <div class="no-image-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            @endif
+                        </div>
 
-                                <div class="event-details">
-                                    <div class="event-title">{{ $event->title }}</div>
-                                    <div class="event-meta">
-                                        <div class="meta-item">
-                                            <i class="fas fa-user"></i>
-                                            Dibuat oleh Admin
-                                        </div>
-                                        <div class="meta-item">
-                                            <i class="fas fa-clock"></i>
-                                            {{ $event->created_at->format('d M Y, H:i') }}
-                                        </div>
-                                        <div class="meta-item">
-                                            <i class="fas fa-eye"></i>
-                                            {{ rand(10, 500) }} views
-                                        </div>
-                                    </div>
-                                    <div class="event-description">
-                                        {{ Str::limit($event->description, 150) }}
-                                    </div>
-                                    <div class="event-tags">
-                                        <span class="tag">Event</span>
-                                        @if($event->event_date >= now())
-                                            <span class="tag" style="background: rgba(34, 197, 94, 0.1); color: #16a34a;">Upcoming</span>
-                                        @else
-                                            <span class="tag" style="background: rgba(239, 68, 68, 0.1); color: #dc2626;">Past</span>
-                                        @endif
-                                    </div>
+                        <div class="event-details">
+                            <div class="event-title">{{ $event->title }}</div>
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-user"></i>
+                                    Dibuat oleh Admin
                                 </div>
-
-                                <div class="event-date-section">
-                                    <div class="date-display">
-                                        <div class="date-day">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</div>
-                                        <div class="date-month">{{ \Carbon\Carbon::parse($event->event_date)->format('M') }}</div>
-                                        <div class="date-year">{{ \Carbon\Carbon::parse($event->event_date)->format('Y') }}</div>
-                                    </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    {{ $event->created_at->format('d M Y, H:i') }}
                                 </div>
-
-                                <div class="action-buttons">
-                                    <a href="{{ route('admin.show', $event) }}" 
-                                       class="btn btn-sm btn-info" 
-                                       title="Lihat Detail">
-                                        <i class="fas fa-eye"></i>
-                                        Detail
-                                    </a>
-                                    <a href="{{ route('admin.edit', $event) }}" 
-                                       class="btn btn-sm btn-warning" 
-                                       title="Edit Event">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('admin.destroy', $event) }}" 
-                                          method="POST" 
-                                          style="display: inline; width: 100%;"
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus event {{ $event->title }}?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="btn btn-sm btn-danger" 
-                                                title="Hapus Event"
-                                                style="width: 100%;">
-                                            <i class="fas fa-trash"></i>
-                                            Hapus
-                                        </button>
-                                    </form>
+                                <div class="meta-item">
+                                    <i class="fas fa-eye"></i>
+                                    {{ rand(10, 500) }} views
                                 </div>
                             </div>
+                            <div class="event-description">
+                                {{ Str::limit($event->description, 150) }}
+                            </div>
+                            <div class="event-tags">
+                                <span class="tag">Event</span>
+                                @if($event->event_date >= now())
+                                <span class="tag" style="background: rgba(34, 197, 94, 0.1); color: #16a34a;">Upcoming</span>
+                                @else
+                                <span class="tag" style="background: rgba(239, 68, 68, 0.1); color: #dc2626;">Past</span>
+                                @endif
+                            </div>
                         </div>
-                    @endforeach
+
+                        <div class="event-date-section">
+                            <div class="date-display">
+                                <div class="date-day">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</div>
+                                <div class="date-month">{{ \Carbon\Carbon::parse($event->event_date)->format('M') }}</div>
+                                <div class="date-year">{{ \Carbon\Carbon::parse($event->event_date)->format('Y') }}</div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="{{ route('admin.show', $event) }}"
+                                class="btn btn-sm btn-info"
+                                title="Lihat Detail">
+                                <i class="fas fa-eye"></i>
+                                Detail
+                            </a>
+                            <a href="{{ route('admin.edit', $event) }}"
+                                class="btn btn-sm btn-warning"
+                                title="Edit Event">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </a>
+                            <form action="{{ route('admin.destroy', $event) }}"
+                                method="POST"
+                                style="display: inline; width: 100%;"
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus event {{ $event->title }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="btn btn-sm btn-danger"
+                                    title="Hapus Event"
+                                    style="width: 100%;">
+                                    <i class="fas fa-trash"></i>
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
 
                 @else
-                    <!-- Empty State -->
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-times"></i>
-                        <h3>Belum Ada Event Terdaftar</h3>
-                        <p>Dashboard event masih kosong. Mulai kelola acara Anda dengan membuat event pertama yang menarik dan informatif untuk audience.</p>
-                        <a href="{{ route('admin.create') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Buat Event Pertama
-                        </a>
-                    </div>
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>Belum Ada Event Terdaftar</h3>
+                    <p>Dashboard event masih kosong. Mulai kelola acara Anda dengan membuat event pertama yang menarik dan informatif untuk audience.</p>
+                    <a href="{{ route('admin.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Buat Event Pertama
+                    </a>
+                </div>
                 @endif
             </div>
         </div>
@@ -693,7 +721,7 @@
                 button.addEventListener('mouseenter', function() {
                     this.style.transform = 'translateY(-2px)';
                 });
-                
+
                 button.addEventListener('mouseleave', function() {
                     if (!this.classList.contains('btn-primary')) {
                         this.style.transform = 'translateY(0)';
@@ -702,7 +730,7 @@
             });
 
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
+                anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
@@ -726,4 +754,7 @@
         });
     </script>
 </body>
+
 </html>
+
+@endsection

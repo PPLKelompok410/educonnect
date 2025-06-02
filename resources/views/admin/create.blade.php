@@ -1,5 +1,12 @@
+@extends('layouts.app')
+
+@section('title', 'Catatan')
+
+@section('content')
+
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +14,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: white;
@@ -224,7 +235,8 @@
             font-weight: 500;
         }
 
-        .success-message, .error-message {
+        .success-message,
+        .error-message {
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -244,16 +256,19 @@
         }
 
         @media (max-width: 768px) {
-            .container { 
-                padding: 20px; 
+            .container {
+                padding: 20px;
                 margin: 10px;
             }
-            .header h1 { 
-                font-size: 2rem; 
+
+            .header h1 {
+                font-size: 2rem;
             }
-            .btn-group { 
-                flex-direction: column; 
+
+            .btn-group {
+                flex-direction: column;
             }
+
             .upload-area {
                 padding: 30px 15px;
             }
@@ -268,17 +283,20 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -288,27 +306,27 @@
 
         <!-- Success/Error Messages (for Laravel Blade) -->
         @if(session('success'))
-            <div class="success-message">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
+        <div class="success-message">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
         @endif
 
         @if(session('error'))
-            <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            </div>
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        </div>
         @endif
 
         <form action="{{ route('admin.store') }}" method="POST" enctype="multipart/form-data" id="eventForm">
             @csrf
-            
+
             <div class="form-group">
                 <label for="title">
                     <i class="fas fa-tag"></i> Judul Event
                 </label>
                 <input type="text" id="title" name="title" placeholder="Masukkan judul event yang menarik..." required value="{{ old('title') }}">
                 @error('title')
-                    <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
+                <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
                 @enderror
             </div>
 
@@ -318,7 +336,7 @@
                 </label>
                 <textarea id="description" name="description" placeholder="Jelaskan detail event, agenda, dan informasi penting lainnya..." required>{{ old('description') }}</textarea>
                 @error('description')
-                    <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
+                <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
                 @enderror
             </div>
 
@@ -328,7 +346,7 @@
                 </label>
                 <input type="datetime-local" id="event_date" name="event_date" required value="{{ old('event_date') }}">
                 @error('event_date')
-                    <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
+                <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
                 @enderror
             </div>
 
@@ -349,7 +367,7 @@
                     </button>
                 </div>
                 @error('image')
-                    <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
+                <span class="error-text"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span>
                 @enderror
             </div>
 
@@ -470,4 +488,7 @@
         }
     </script>
 </body>
+
 </html>
+
+@endsection

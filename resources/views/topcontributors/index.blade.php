@@ -1,207 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Top Contributors</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #E0F7FA;
-            font-family: 'Segoe UI', sans-serif;
-        }
+@extends('layouts.app')
 
-        h1.title {
-            color: #0277BD;
-            font-size: 2.8rem;
-            font-weight: bold;
-        }
-
-        h2.subtitle {
-            color: #0277BD;
-            margin-bottom: 2rem;
-        }
-
-        .podium {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .card-top {
-            width: 200px;
-            padding: 1.2rem;
-            border-radius: 15px;
-            color: #fff;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .card-top:hover {
-            transform: scale(1.05);
-        }
-
-        .card-top .total-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-top: 0.5rem;
-            color: #fff;
-        }
-
-        .gold {
-            background: linear-gradient(135deg, #FFD700, #FFC107);
-            transform: translateY(-20px);
-            
-        }
-
-        .silver {
-            background: linear-gradient(135deg, #B0BEC5, #90A4AE);
-        }
-
-        .bronze {
-            background: linear-gradient(135deg, #A1887F, #8D6E63);
-        }
-
-        .icon-row i {
-            font-size: 1.4rem;
-            margin: 0 6px;
-        }
-
-        .total-circle {
-            background: white;
-            color: #0277BD;
-            font-weight: bold;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        .card-horizontal {
-            background-color: #ffffff;
-            border-left: 8px solid #0288D1;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .card-horizontal .info {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .card-horizontal .info i {
-            font-size: 1.2rem;
-            color: #0288D1;
-        }
-
-        .legend {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.95rem;
-            color: #0277BD;
-        }
-
-        .legend-item i {
-            font-size: 1.2rem;
-        }
-    </style>
-</head>
-<body>
-<div class="container mt-5">
+@section('content')
+<div class="container mx-auto mt-12 px-4">
     <div class="text-center">
-        <h1 class="title">
+        <h1 class="text-4xl font-bold text-blue-700 mb-2 flex justify-center items-center gap-2">
             <i class="bi bi-trophy-fill"></i> Top Contributors <i class="bi bi-trophy-fill"></i>
         </h1>
-        <h2 class="subtitle">{{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</h2>
+        <h2 class="text-2xl text-blue-600">{{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</h2>
     </div>
 
     <!-- Top 3 Podium -->
-    <div class="podium">
+    <div class="flex justify-center items-end gap-6 flex-wrap my-8">
         @php
-            $topThree = $penggunas->take(3);
-            $podiumStyles = [
-                ['rank' => 2, 'class' => 'silver'],
-                ['rank' => 1, 'class' => 'gold'],
-                ['rank' => 3, 'class' => 'bronze'],
-            ];
-            $icons = ['bi-award-fill', 'bi-chat-dots-fill', 'bi-people-fill'];
+        $topThree = $penggunas->take(3);
+        $podiumStyles = [
+        ['rank' => 2, 'class' => 'bg-gradient-to-br from-gray-400 to-gray-300'], // Silver
+        ['rank' => 1, 'class' => 'bg-gradient-to-br from-yellow-400 to-yellow-300 -translate-y-5'], // Gold
+        ['rank' => 3, 'class' => 'bg-gradient-to-br from-yellow-800 to-yellow-700'], // Bronze
+        ];
         @endphp
 
         @foreach ($podiumStyles as $style)
-            @php
-                $pengguna = $topThree[$style['rank'] - 1] ?? null;
-            @endphp
-            @if ($pengguna)
-                <div class="card-top {{ $style['class'] }}">
-                    <h5><i class="bi bi-award"></i> {{ $pengguna->nama ?? 'Tidak diketahui' }}</h5>
-                    <div class="icon-row my-2">
-                        <i class="bi bi-journal-text"></i> {{ $pengguna->notes_count }}
-                        <i class="bi bi-chat-dots"></i> {{ $pengguna->note_comments_count }}
-                        <i class="bi bi-people"></i> {{ $pengguna->comments_count }}
-                    </div>
-                        <div class="total-value">{{ $pengguna->total_contributions }}</div>
-                    </div>
-            @endif
+        @php $pengguna = $topThree[$style['rank'] - 1] ?? null; @endphp
+        @if ($pengguna)
+        <div class="w-48 p-6 text-white rounded-xl shadow-md text-center flex flex-col justify-center items-center {{ $style['class'] }} transition-transform hover:scale-105 min-h-[180px]">
+            <h5 class="text-lg font-semibold mb-2">
+                <i class="bi bi-award"></i> {{ $pengguna->nama ?? 'Tidak diketahui' }}
+            </h5>
+            <div class="flex items-center justify-center gap-4 text-base my-2">
+                <span><i class="bi bi-journal-text"></i> {{ $pengguna->notes_count }}</span>
+                <span><i class="bi bi-chat-dots"></i> {{ $pengguna->note_comments_count }}</span>
+                <span><i class="bi bi-people"></i> {{ $pengguna->comments_count }}</span>
+            </div>
+            <div class="text-xl font-bold mt-2">{{ $pengguna->total_contributions }}</div>
+        </div>
+        @endif
         @endforeach
     </div>
 
     <!-- Rank 4 - 10 Cards -->
     @php $rank = 4; @endphp
     @foreach ($penggunas->skip(3)->take(7) as $pengguna)
-        <div class="card-horizontal">
-            <div class="info">
-                <strong class="text-primary me-3">#{{ $rank++ }}</strong>
-                <div>{{ $pengguna->nama ?? 'Tidak diketahui' }}</div>
-            </div>
-            <div class="info">
-                <i class="bi bi-journal-text"></i> {{ $pengguna->notes_count }}
-                <i class="bi bi-chat-dots"></i> {{ $pengguna->note_comments_count }}
-                <i class="bi bi-people"></i> {{ $pengguna->comments_count }}
-                <div class="total-circle ms-3">{{ $pengguna->total_contributions }}</div>
+    <div class="bg-white border-l-8 border-blue-600 shadow-md p-4 rounded-lg mb-4 flex flex-wrap justify-between items-center">
+        <div class="flex items-center gap-6">
+            <span class="text-blue-700 font-bold text-lg">#{{ $rank++ }}</span>
+            <span class="text-gray-800">{{ $pengguna->nama ?? 'Tidak diketahui' }}</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <span><i class="bi bi-journal-text text-blue-600"></i> {{ $pengguna->notes_count }}</span>
+            <span><i class="bi bi-chat-dots text-blue-600"></i> {{ $pengguna->note_comments_count }}</span>
+            <span><i class="bi bi-people text-blue-600"></i> {{ $pengguna->comments_count }}</span>
+            <div class="w-12 h-12 flex items-center justify-center bg-white text-blue-600 font-bold rounded-full shadow">
+                {{ $pengguna->total_contributions }}
             </div>
         </div>
+    </div>
     @endforeach
 
     <!-- Legend -->
-    <div class="legend">
-        <div class="legend-item"><i class="bi bi-journal-text"></i> Catatan</div>
-        <div class="legend-item"><i class="bi bi-chat-dots"></i> Komentar Catatan</div>
-        <div class="legend-item"><i class="bi bi-people"></i> Komentar Forum</div>
-        <div class="legend-item"><span class="total-circle">#</span> Total Kontribusi</div>
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md flex flex-wrap justify-center gap-6 text-blue-700 text-sm">
+        <div class="flex items-center gap-2"><i class="bi bi-journal-text"></i> Catatan</div>
+        <div class="flex items-center gap-2"><i class="bi bi-chat-dots"></i> Komentar Catatan</div>
+        <div class="flex items-center gap-2"><i class="bi bi-people"></i> Komentar Forum</div>
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full shadow flex items-center justify-center bg-white text-blue-700 font-bold">#</div> Total Kontribusi
+        </div>
     </div>
 </div>
-</body>
-</html>
+@endsection

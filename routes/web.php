@@ -27,7 +27,7 @@ Route::get('/reset_password', [AuthController::class, 'reset_password'])->name('
 Route::post('/reset_password_process', [AuthController::class, 'reset_password_process'])->name('auth.reset_password_process');
 
 // Page Galeri Matkul 
-Route::get('/matkul', [MataKuliahController::class, 'index']);
+Route::get('/matkul', [MataKuliahController::class, 'index'])->name('matkul.index');
 Route::get('/matkul/manage', [MataKuliahController::class, 'manage'])->name('matkul.manage');
 Route::get('/matkul/create', [MataKuliahController::class, 'create'])->name('matkul.create');
 Route::post('/matkul', [MataKuliahController::class, 'store'])->name('matkul.store');
