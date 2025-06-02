@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Profil;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
-class ProfilController extends Controller
+class ProfilController
 {
     /**
      * Display a listing of the resource.
@@ -59,7 +60,7 @@ class ProfilController extends Controller
     public function show(Profil $profile)
     {
         // Retrieve the profile by its ID
-        $profile = Profil::findOrFail($id);
+        $profile = Profil::findOrFail($profile);
 
         // Return the view with the profile data
         return view('profiles.show', compact('profile'));
@@ -72,7 +73,7 @@ class ProfilController extends Controller
     {
         $user = Pengguna::find(session('user')->id);
         $profile = Profil::firstOrNew(['pengguna_id' => $user->id]);
-        return view('profiles.edit', compact('user','profile'));
+        return view('profiles.edit', compact('user', 'profile'));
     }
 
     /**
@@ -120,20 +121,20 @@ class ProfilController extends Controller
         try {
             // Get the currently logged in user
             $user = Pengguna::find(session('user')->id);
-            
+
             if (!$user) {
                 return redirect()->back()->with('error', 'User tidak ditemukan.');
             }
-    
+
             // Delete associated profile first (due to foreign key constraint)
             Profil::where('pengguna_id', $user->id)->delete();
-            
+
             // Delete the user
             $user->delete();
-            
+
             // Clear the session
             session()->forget('user');
-            
+
             return redirect()->route('landing')->with('success', 'Akun berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus akun. ' . $e->getMessage());

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Profil;
 
 class Pengguna extends Model
 {
@@ -12,7 +13,7 @@ class Pengguna extends Model
     public $timestamps = false;
     protected $table = 'penggunas';
 
-    protected $fillable =[
+    protected $fillable = [
         'full_name',
         'date_of_birth',
         'email',
@@ -20,7 +21,8 @@ class Pengguna extends Model
         'gender'
     ];
 
-    public function profil(){
+    public function profil()
+    {
         return $this->hasOne(Profil::class, 'pengguna_id');
     }
 }

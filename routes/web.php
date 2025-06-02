@@ -9,6 +9,8 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TopContributorsController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\AdminEventController;
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/dashboard', 'dashboard')->name('dashboard');
@@ -36,7 +38,7 @@ Route::get('/reset_password', [AuthController::class, 'reset_password'])->name('
 Route::post('/reset_password_process', [AuthController::class, 'reset_password_process'])->name('auth.reset_password_process');
 
 // Page Galeri Matkul 
-Route::get('/matkul', [MataKuliahController::class, 'index']);
+Route::get('/matkul', [MataKuliahController::class, 'index'])->name('matkul.index');
 Route::get('/matkul/manage', [MataKuliahController::class, 'manage'])->name('matkul.manage');
 Route::get('/matkul/create', [MataKuliahController::class, 'create'])->name('matkul.create');
 Route::post('/matkul', [MataKuliahController::class, 'store'])->name('matkul.store');
@@ -93,4 +95,3 @@ Route::post('/process-payment/{plan}', [PaymentController::class, 'processPaymen
 Route::get('/payment/receipt/{transaction}', [PaymentController::class, 'downloadReceipt'])->name('payments.receipt');
 Route::get('/payment/success/{transaction}', [PaymentController::class, 'showSuccess'])->name('payments.success');
 Route::delete('/subscription/cancel', [PaymentController::class, 'cancelSubscription'])->name('subscription.cancel');
-

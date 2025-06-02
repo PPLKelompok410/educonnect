@@ -9,7 +9,10 @@ class Profil extends Model
     protected $table = 'profiles';
 
     protected $fillable = [
-        'pengguna_id', 'phone_number', 'address', 'bio'
+        'pengguna_id',
+        'phone_number',
+        'address',
+        'bio'
     ];
 
     public $timestamps = true;
@@ -19,4 +22,3 @@ class Profil extends Model
         return $this->belongsTo(Pengguna::class, 'pengguna_id');
     }
 }
-

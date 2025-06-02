@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\NoteComment;
 use App\Models\Note;
 
-class NoteCommentController extends Controller
+class NoteCommentController
 {
     public function store(Request $request, $noteId)
     {
@@ -16,7 +16,7 @@ class NoteCommentController extends Controller
 
         NoteComment::create([
             'note_id' => $noteId,
-            'user_id' => 1,
+            'user_id' => session('user')->id,
             'content' => $request->content,
         ]);
 
