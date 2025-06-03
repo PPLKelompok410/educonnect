@@ -80,7 +80,6 @@ Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name(
 
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
 
-
 Route::get('/payment', [PaymentController::class, 'index'])->name('payments.index');
 Route::get('/payment/create', [PaymentController::class, 'create'])->name('payments.create');
 Route::post('/payment', [PaymentController::class, 'store'])->name('payments.store');
@@ -95,3 +94,14 @@ Route::post('/process-payment/{plan}', [PaymentController::class, 'processPaymen
 Route::get('/payment/receipt/{transaction}', [PaymentController::class, 'downloadReceipt'])->name('payments.receipt');
 Route::get('/payment/success/{transaction}', [PaymentController::class, 'showSuccess'])->name('payments.success');
 Route::delete('/subscription/cancel', [PaymentController::class, 'cancelSubscription'])->name('subscription.cancel');
+
+Route::get('/admin/event', [AdminEventController::class, 'index'])->name('admin.index');
+Route::get('/admin/event/create', [AdminEventController::class, 'create'])->name('admin.create');
+Route::post('/admin/event', [AdminEventController::class, 'store'])->name('admin.store');
+Route::get('/admin/event/{event}', [AdminEventController::class, 'show'])->name('admin.show');
+Route::get('/admin/event/{event}/edit', [AdminEventController::class, 'edit'])->name('admin.edit');
+Route::put('/admin/event/{event}', [AdminEventController::class, 'update'])->name('admin.update');
+Route::delete('/admin/event/{event}', [AdminEventController::class, 'destroy'])->name('admin.destroy');
+
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.detail');

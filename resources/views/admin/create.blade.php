@@ -319,7 +319,6 @@
 
         <form action="{{ route('admin.store') }}" method="POST" enctype="multipart/form-data" id="eventForm">
             @csrf
-
             <div class="form-group">
                 <label for="title">
                     <i class="fas fa-tag"></i> Judul Event

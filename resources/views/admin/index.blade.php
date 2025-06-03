@@ -407,7 +407,6 @@
                 opacity: 0;
                 transform: translateX(-20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -721,7 +720,6 @@
                 button.addEventListener('mouseenter', function() {
                     this.style.transform = 'translateY(-2px)';
                 });
-
                 button.addEventListener('mouseleave', function() {
                     if (!this.classList.contains('btn-primary')) {
                         this.style.transform = 'translateY(0)';
