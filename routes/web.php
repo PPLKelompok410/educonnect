@@ -8,6 +8,7 @@ use App\Http\Controllers\NoteCommentController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TopContributorsController;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminEventController;
@@ -79,6 +80,10 @@ Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('pro
 Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
 
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
+
+// Bookmark routes
+Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+Route::post('/bookmarks/toggle/{note}', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
 
 Route::get('/payment', [PaymentController::class, 'index'])->name('payments.index');
 Route::get('/payment/create', [PaymentController::class, 'create'])->name('payments.create');

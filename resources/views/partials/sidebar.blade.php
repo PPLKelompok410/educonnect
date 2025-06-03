@@ -62,6 +62,15 @@
           :class="open ? 'opacity-100 w-auto' : 'opacity-0 w-0'">Top Contributor</span>
       </a>
 
+      <!-- Item: Bookmarks -->
+      <a href="{{ route('bookmarks.index') }}" class="flex items-center p-2 rounded-md hover:bg-gray-200 text-gray-700 transition">
+        <svg class="w-5 h-5 mr-2 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M5 3a2 2 0 00-2 2v12a1 1 0 001.447.894L10 16.118l5.553 1.776A1 1 0 0017 17V5a2 2 0 00-2-2H5z"/>
+        </svg>
+        <span class="ml-3 whitespace-nowrap inline-block overflow-hidden transition-all duration-300"
+          :class="open ? 'opacity-100 w-auto' : 'opacity-0 w-0'">Bookmarks</span>
+      </a>
+
     </nav>
 
 

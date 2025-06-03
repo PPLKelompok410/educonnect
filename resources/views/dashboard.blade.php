@@ -338,6 +338,8 @@
           </button>
         </form>
       </div>
+      <p class="text-gray-600 text-sm mb-4">A to-do list is a list of tasks to help organize your activities.</p>
+      <button class="main-blue text-white py-1 px-4 rounded-full text-sm font-medium">START</button>
     </div>
 
     <!-- Main Content -->

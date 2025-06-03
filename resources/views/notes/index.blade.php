@@ -62,9 +62,57 @@
                 </div>
 
                 {{-- Tombol Lihat --}}
-                <a href="{{ route('notes.show', $note->id) }}" class="mt-auto bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded shadow self-start">
-                    Lihat
-                </a>
+                <!-- In the card actions div, add the bookmark button next to the view button -->
+                <div class="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
+                    <a href="{{ route('notes.show', $note->id) }}" class="text-blue-500 hover:text-blue-600 text-sm font-medium">
+                        <i class="fas fa-eye"></i> Lihat
+                    </a>
+                    @if(session('user'))
+                    <button 
+                        onclick="toggleBookmark({{ $note->id }}, this)" 
+                        class="text-gray-400 hover:text-yellow-500 {{ $note->bookmarks->where('user_id', session('user')->id)->count() ? 'text-yellow-500' : '' }}"
+                        title="Bookmark"
+                    >
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    @endif
+                </div>
+
+            @push('scripts')
+            <script>
+                function toggleBookmark(noteId, button) {
+                    fetch(`/bookmarks/toggle/${noteId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'added') {
+                            button.classList.add('text-yellow-500');
+                            button.classList.remove('text-gray-400');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Bookmark berhasil ditambahkan!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        } else {
+                            button.classList.remove('text-yellow-500');
+                            button.classList.add('text-gray-400');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Bookmark berhasil dihapus!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    });
+                }
+            </script>
+            @endpush
             </div>
         </div>
         @endforeach
