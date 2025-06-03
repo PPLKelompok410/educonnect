@@ -45,19 +45,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+<<<<<<< Updated upstream
 
-     public function notes()
-    {
-        return $this->hasMany(Note::class);
-    }
-
-    public function noteComments()
-    {
-        return $this->hasMany(NoteComment::class);
-    }
-
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
+=======
+>>>>>>> Stashed changes
 }
