@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Note;
 use App\Models\MataKuliah;
+use App\Models\NoteRating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ class NoteController
 {
     public function index(MataKuliah $matkul)
     {
-        $notes = Note::with(['user', 'bookmarks']) // tambahkan 'bookmarks'
+        $notes = Note::with(['user', 'bookmarks'])
             ->where('matkul_id', $matkul->id)
             ->where('type', 'galeri')
             ->latest()
@@ -95,9 +96,21 @@ class NoteController
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
         ]);
+        $userId = session('user')->id;
 
-        $note->rating = $request->rating;
+        // Update or create rating
+        NoteRating::updateOrCreate(
+            ['note_id' => $note->id, 'user_id' => $userId],
+            ['rating' => $request->rating]
+        );
+
+        // Optional: update average rating in notes table
+        $note->rating = $note->averageRating();
         $note->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'rating' => $note->rating]);
+        }
 
         return redirect()->back()->with('success', 'Rating berhasil diberikan.');
     }

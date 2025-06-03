@@ -48,38 +48,42 @@ $currentUser = session('user');
     {{-- Form Give Rating --}}
     <div class="bg-white rounded shadow p-6 mb-6">
         <h5 class="text-lg font-semibold text-gray-800 mb-3">Berikan Rating</h5>
-        <form action="{{ route('notes.rate', $note->id) }}" method="POST" class="flex items-center gap-2">
-            @csrf
-            <select name="rating" class="border rounded px-3 py-2 text-sm text-gray-700" required>
-                <option value="" disabled selected>Pilih Rating</option>
-                <option value="1">1 - Sangat Buruk</option>
-                <option value="2">2 - Buruk</option>
-                <option value="3">3 - Cukup</option>
-                <option value="4">4 - Baik</option>
-                <option value="5">5 - Sangat Baik</option>
-            </select>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow text-sm">Kirim</button>
-        </form>
-
-        @if ($note->rating && $note->rating > 0)
+        <div 
+            x-data="{
+                rating: {{ $note->ratings->where('user_id', $currentUser->id ?? 0)->first()->rating ?? 0 }},
+                hoverRating: 0,
+                setRating(value) {
+                    this.rating = value;
+                    fetch('{{ route('notes.rate', $note->id) }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ rating: value })
+                    }).then(() => {
+                        // Optional: tampilkan notifikasi sukses
+                    });
+                }
+            }"
+            class="flex items-center gap-2"
+        >
+            <template x-for="star in 5" :key="star">
+                <button type="button" @click="setRating(star)" @mouseover="hoverRating = star" @mouseleave="hoverRating = 0" class="focus:outline-none">
+                    <i 
+                        class="bi"
+                        :class="(hoverRating >= star || (!hoverRating && rating >= star)) ? 'bi-star-fill text-black' : 'bi-star text-black'"
+                        style="font-size: 2rem;"
+                    ></i>
+                </button>
+            </template>
+            <span class="ml-2 text-sm text-gray-600" x-text="rating ? `(${rating}/5)` : ''"></span>
+        </div>
         <div class="mt-4">
             <p class="text-sm text-gray-600">
-                Rating saat ini:
-                @for ($i = 1; $i <= 5; $i++)
-                    @if ($i <=$note->rating)
-                    <i class="bi bi-star-fill text-warning"></i>
-                    @else
-                    <i class="bi bi-star text-warning"></i>
-                    @endif
-                    @endfor
+                Rating rata-rata: {{ number_format($note->averageRating(), 2) ?? '-' }} dari {{ $note->totalReviewer() }} reviewer
             </p>
         </div>
-        @else
-        <div class="mt-4">
-            <p class="text-sm text-gray-500">Belum ada rating</p>
-        </div>
-        @endif
-
     </div>
 
     {{-- Komentar --}}

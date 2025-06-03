@@ -40,17 +40,18 @@
 
                 {{-- Rating --}}
                 <div class="mb-4">
-                    @if ($note->rating && $note->rating > 0)
+                    @if ($note->averageRating())
                     <div class="mt-4">
                         <p class="text-sm text-gray-600">
-                            Rating saat ini:
+                            Rating: {{ number_format($note->averageRating(), 2) }} 
                             @for ($i = 1; $i <= 5; $i++)
-                                @if ($i <=$note->rating)
+                                @if ($i <= $note->averageRating())
                                 <i class="bi bi-star-fill text-warning"></i>
                                 @else
                                 <i class="bi bi-star text-warning"></i>
                                 @endif
-                                @endfor
+                            @endfor
+                            <span class="ml-2 text-xs text-gray-500">({{ $note->totalReviewer() }} reviewer)</span>
                         </p>
                     </div>
                     @else
@@ -112,8 +113,6 @@
                 }
             </script>
             @endpush
-
-
             </div>
         </div>
         @endforeach

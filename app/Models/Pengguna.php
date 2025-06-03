@@ -21,7 +21,7 @@ class Pengguna extends Model
         'gender'
     ];
 
-    public function profile()
+    public function profil()
     {
         return $this->hasOne(Profil::class, 'pengguna_id');
     }

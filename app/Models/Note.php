@@ -35,4 +35,19 @@ class Note extends Model
     {
         return $this->hasMany(Bookmark::class);
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(\App\Models\NoteRating::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->ratings()->avg('rating') ?? 0;
+    }
+
+    public function totalReviewer()
+    {
+        return $this->ratings()->count();
+    }
 }
