@@ -396,19 +396,15 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            EduConnect
-        </div>
-    </header>
+@extends('layouts.app')
+
+@section('content')
 
     <!-- Main Container -->
     <div class="container">
         <!-- Page Header -->
         <div class="page-header">
-            <h1 class="page-title">Profile</h1>
+            <h1 class="page-title">Profile - {{ session('user')->full_name }}</h1>
         </div>
 
         <!-- Profile Form -->
@@ -755,5 +751,6 @@
             }
         });
     </script>
+@endsection
 </body>
 </html>

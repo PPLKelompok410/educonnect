@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.appadmin')
 
-@section('title', 'Catatan')
+
 
 @section('content')
 

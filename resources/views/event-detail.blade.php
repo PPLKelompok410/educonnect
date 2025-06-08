@@ -405,6 +405,9 @@
     </style>
 </head>
 <body>
+@extends('layouts.app')
+
+@section('content')
     <main class="main-content">
         <div class="container">
             <a href="/events" class="back-btn">
@@ -478,5 +481,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
+@endsection
 </body>
 </html>
