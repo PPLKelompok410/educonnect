@@ -13,7 +13,7 @@ class NoteController
 {
     public function index(MataKuliah $matkul)
     {
-        $notes = Note::with('user')
+        $notes = Note::with(['user', 'bookmarks'])
             ->where('matkul_id', $matkul->id)
             ->where('type', 'galeri')
             ->latest()

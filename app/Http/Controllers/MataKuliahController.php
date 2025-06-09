@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MataKuliah;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class MataKuliahController
 {
@@ -39,17 +40,16 @@ class MataKuliahController
             'nama' => 'required',
             'kode' => 'required|unique:mata_kuliahs',
             'prodi' => 'required',
-            'gambar' => 'nullable|image|max:2048',
+            'gambar' => 'nullable|image',
         ]);
 
-        $data = $request->only(['nama', 'kode', 'prodi']); // hanya ambil yang dibutuhkan
+        $data = $request->only(['nama', 'kode', 'prodi']);
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/sampul', $filename);
-            $data['gambar'] = $filename;
-            Storage::disk('public')->putFileAs('sampul', $file, $filename);
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images'), $filename); // ⬅️ simpan ke public/images
+            $data['gambar'] = $filename; // simpan nama file saja ke DB
         }
 
         MataKuliah::create($data);
@@ -77,14 +77,19 @@ class MataKuliahController
         $data = $request->only(['nama', 'kode', 'prodi']);
 
         if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
             if ($matkul->gambar) {
-                Storage::delete('public/sampul/' . $matkul->gambar);
+                $oldPath = public_path('images/' . $matkul->gambar);
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
             }
+
+            // Simpan gambar baru
             $file = $request->file('gambar');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/sampul', $filename);
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images'), $filename);
             $data['gambar'] = $filename;
-            Storage::disk('public')->putFileAs('sampul', $file, $filename);
         }
 
         $matkul->update($data);

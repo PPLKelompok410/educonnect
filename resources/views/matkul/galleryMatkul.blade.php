@@ -65,7 +65,7 @@ $currentUser = session('user');
     <div class="mata-kuliah" data-prodi="{{ strtolower($mk->prodi) }}">
       <a href="{{ url('matkul/' . $mk->id) }}" class="block bg-white rounded shadow hover:shadow-lg transition overflow-hidden">
         <img
-          src="{{ $mk->gambar ? asset('storage/sampul/' . $mk->gambar) : asset('images/default-photo.jpg') }}"
+          src="{{ $mk->gambar ? asset('images/' . $mk->gambar) : asset('images/default-photo.jpg') }}"
           class="w-full h-48 object-cover"
           alt="{{ $mk->nama }}">
         <div class="p-4">

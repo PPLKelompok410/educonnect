@@ -25,7 +25,7 @@
         @if ($pengguna)
         <div class="w-48 p-6 text-white rounded-xl shadow-md text-center flex flex-col justify-center items-center {{ $style['class'] }} transition-transform hover:scale-105 min-h-[180px]">
             <h5 class="text-lg font-semibold mb-2">
-                <i class="bi bi-award"></i> {{ $pengguna->nama ?? 'Tidak diketahui' }}
+                <i class="bi bi-award"></i> {{ $pengguna->full_name ?? 'Tidak diketahui' }}
             </h5>
             <div class="flex items-center justify-center gap-4 text-base my-2">
                 <span><i class="bi bi-journal-text"></i> {{ $pengguna->notes_count }}</span>
@@ -44,7 +44,7 @@
     <div class="bg-white border-l-8 border-blue-600 shadow-md p-4 rounded-lg mb-4 flex flex-wrap justify-between items-center">
         <div class="flex items-center gap-6">
             <span class="text-blue-700 font-bold text-lg">#{{ $rank++ }}</span>
-            <span class="text-gray-800">{{ $pengguna->nama ?? 'Tidak diketahui' }}</span>
+            <span class="text-gray-800">{{ $pengguna->full_name ?? 'Tidak diketahui' }}</span>
         </div>
         <div class="flex items-center gap-4">
             <span><i class="bi bi-journal-text text-blue-600"></i> {{ $pengguna->notes_count }}</span>
@@ -63,7 +63,7 @@
         <div class="flex items-center gap-2"><i class="bi bi-chat-dots"></i> Komentar Catatan</div>
         <div class="flex items-center gap-2"><i class="bi bi-people"></i> Komentar Forum</div>
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full shadow flex items-center justify-center bg-white text-blue-700 font-bold">#</div> Total Kontribusi
+            <div class="w-8 h-8 rounded-full shadow flex items-center justify-center bg-white text-blue-700 font-bold">#</div> Poin
         </div>
     </div>
 </div>

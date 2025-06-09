@@ -8,10 +8,12 @@ use App\Http\Controllers\NoteCommentController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TopContributorsController;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\DashboardController;
+use App\Models\Note;
 
 Route::view('/', 'welcome')->name('welcome');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -26,14 +28,7 @@ Route::get('/dashboard/grades', [DashboardController::class, 'grades'])->name('d
 Route::get('/dashboard/discussions', [DashboardController::class, 'discussions'])->name('dashboard.discussions');
 
 // Admin Dashboard Route
-Route::get('/admin/dashboard', function () {
-    // Cek apakah user sudah login dan merupakan admin
-    if (!session()->has('login') || !session('is_admin')) {
-        return redirect()->route('auth.login')->with('message', 'Akses ditolak.');
-    }
-
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
 
 Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/login_process', [AuthController::class, 'login_process'])->name('auth.login_process');
@@ -49,14 +44,14 @@ Route::post('/reset_password_process', [AuthController::class, 'reset_password_p
 
 
 // Add this route for viewing all user notes
-Route::get('/notes', function() {
+Route::get('/notes', function () {
     $user = session('user');
     $notes = Note::with('matkul')
         ->where('user_id', $user->id)
         ->where('type', 'galeri')
         ->latest()
         ->get();
-    
+
     return view('notes.all', compact('notes'));
 })->name('notes.all');
 
@@ -105,7 +100,10 @@ Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name(
 // Top contributor
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
 
-// Manage upgrade plan
+// Bookmark routes
+Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+Route::post('/bookmarks/toggle/{note}', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
+
 Route::get('/payment', [PaymentController::class, 'index'])->name('payments.index');
 Route::get('/payment/create', [PaymentController::class, 'create'])->name('payments.create');
 Route::post('/payment', [PaymentController::class, 'store'])->name('payments.store');

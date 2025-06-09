@@ -75,7 +75,7 @@
                                         <label class="block mb-1 text-sm text-gray-600">Sampul (Opsional)</label>
                                         <input type="file" name="gambar" class="w-full border px-4 py-2 rounded">
                                         @if ($mk->gambar)
-                                            <img src="{{ asset('storage/sampul/' . $mk->gambar) }}" alt="Sampul" class="mt-2 w-24 h-auto rounded border">
+                                            <img src="{{ asset('images/' . $mk->gambar) }}" alt="Sampul" class="mt-2 w-24 h-auto rounded border">
                                         @endif
                                     </div>
                                 </div>
