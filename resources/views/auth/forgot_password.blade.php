@@ -143,7 +143,6 @@
     <div class="page-wrapper" id="page-wrapper">
         <div class="left" id="left-panel">
             <h1>EduConnect</h1>
-            <p>Connect. Share. Grow.</p>
         </div>
 
         <div class="right" id="right-panel">

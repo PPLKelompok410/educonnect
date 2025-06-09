@@ -299,6 +299,9 @@
     </style>
 </head>
 <body>
+@extends('layouts.app')
+
+@section('content')
     <main class="main-content">
         <div class="container">
             <div class="page-title">
@@ -397,5 +400,6 @@
             });
         });
     </script>
+@endsection
 </body>
 </html>

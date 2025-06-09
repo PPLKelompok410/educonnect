@@ -89,6 +89,58 @@
       border-radius: 50%;
       object-fit: cover;
     }
+
+    .backdrop-blur-sm {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    .transition-all {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .hover\:bg-opacity-10:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-item {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .sidebar-item:hover,
+    .sidebar-item.active {
+      background-color: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
+      transform: translateX(4px);
+    }
+
+    .sidebar-item.active {
+      background-color: rgba(37, 99, 235, 0.15);
+      font-weight: 600;
+    }
+
+    .sidebar-icon {
+      margin-right: 12px;
+      transition: color 0.3s;
+    }
+    
+    .payment {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .payment:hover {
+      background-color: rgba(37, 99, 235, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    [x-cloak] { display: none !important; }
   </style>
 </head>
 
@@ -105,14 +157,8 @@
       @yield('content')
     </div>
   </div>
-<<<<<<< HEAD
 
     @stack('scripts')
 </body>
 
 </html>
-=======
-</body>
-
-</html>
->>>>>>> main

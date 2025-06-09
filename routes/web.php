@@ -12,19 +12,23 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminEventController;
+use App\Http\Controllers\DashboardController;
+use App\Models\Note;
 
 Route::view('/', 'welcome')->name('welcome');
-Route::view('/dashboard', 'dashboard')->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+
+
+Route::get('/dashboard/profile', [DashboardController::class, 'profile'])->name('dashboard.profile');
+Route::get('/dashboard/classes', [DashboardController::class, 'classes'])->name('dashboard.classes');
+Route::get('/dashboard/assignments', [DashboardController::class, 'assignments'])->name('dashboard.assignments');
+Route::get('/dashboard/schedule', [DashboardController::class, 'schedule'])->name('dashboard.schedule');
+Route::get('/dashboard/grades', [DashboardController::class, 'grades'])->name('dashboard.grades');
+Route::get('/dashboard/discussions', [DashboardController::class, 'discussions'])->name('dashboard.discussions');
 
 // Admin Dashboard Route
-Route::get('/admin/dashboard', function () {
-    // Cek apakah user sudah login dan merupakan admin
-    if (!session()->has('login') || !session('is_admin')) {
-        return redirect()->route('auth.login')->with('message', 'Akses ditolak.');
-    }
-
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
 
 Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/login_process', [AuthController::class, 'login_process'])->name('auth.login_process');
@@ -37,6 +41,19 @@ Route::get('/security_question', [AuthController::class, 'security_question'])->
 Route::post('/security_question_process', [AuthController::class, 'process_security_question'])->name('auth.security_question_process');
 Route::get('/reset_password', [AuthController::class, 'reset_password'])->name('auth.reset_password');
 Route::post('/reset_password_process', [AuthController::class, 'reset_password_process'])->name('auth.reset_password_process');
+
+
+// Add this route for viewing all user notes
+Route::get('/notes', function () {
+    $user = session('user');
+    $notes = Note::with('matkul')
+        ->where('user_id', $user->id)
+        ->where('type', 'galeri')
+        ->latest()
+        ->get();
+
+    return view('notes.all', compact('notes'));
+})->name('notes.all');
 
 // Page Galeri Matkul 
 Route::get('/matkul', [MataKuliahController::class, 'index'])->name('matkul.index');
@@ -71,6 +88,7 @@ Route::post('/notes/{note}/comments', [NoteCommentController::class, 'store'])->
 Route::put('/note-comments/{comment}', [NoteCommentController::class, 'update'])->name('note-comments.update');
 Route::delete('/note-comments/{comment}', [NoteCommentController::class, 'destroy'])->name('note-comments.destroy');
 
+// Profile
 Route::get('profiles', [ProfilController::class, 'index'])->name('profiles.index');
 Route::get('profiles/create', [ProfilController::class, 'create'])->name('profiles.create');
 Route::post('profiles', [ProfilController::class, 'store'])->name('profiles.store');
@@ -79,6 +97,7 @@ Route::get('profiles/{profile}/edit', [ProfilController::class, 'edit'])->name('
 Route::put('profiles/{profile}', [ProfilController::class, 'update'])->name('profiles.update');
 Route::delete('profiles/{profile}', [ProfilController::class, 'destroy'])->name('profiles.destroy');
 
+// Top contributor
 Route::get('/top-contributors', [TopContributorsController::class, 'index'])->name('topcontributors.index');
 
 // Bookmark routes
@@ -93,6 +112,7 @@ Route::get('/payment/{payment}/edit', [PaymentController::class, 'edit'])->name(
 Route::put('/payment/{payment}', [PaymentController::class, 'update'])->name('payments.update');
 Route::delete('/payment/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
 
+// Upgrade plan
 Route::get('/upgrade-plans', [PaymentController::class, 'showPlans'])->name('upgrade.plans');
 Route::get('/checkout/{plan}', [PaymentController::class, 'checkout'])->name('upgrade.checkout');
 Route::post('/process-payment/{plan}', [PaymentController::class, 'processPayment'])->name('upgrade.process-payment');
@@ -100,13 +120,17 @@ Route::get('/payment/receipt/{transaction}', [PaymentController::class, 'downloa
 Route::get('/payment/success/{transaction}', [PaymentController::class, 'showSuccess'])->name('payments.success');
 Route::delete('/subscription/cancel', [PaymentController::class, 'cancelSubscription'])->name('subscription.cancel');
 
-Route::get('/admin/event', [AdminEventController::class, 'index'])->name('admin.index');
-Route::get('/admin/event/create', [AdminEventController::class, 'create'])->name('admin.create');
-Route::post('/admin/event', [AdminEventController::class, 'store'])->name('admin.store');
-Route::get('/admin/event/{event}', [AdminEventController::class, 'show'])->name('admin.show');
-Route::get('/admin/event/{event}/edit', [AdminEventController::class, 'edit'])->name('admin.edit');
-Route::put('/admin/event/{event}', [AdminEventController::class, 'update'])->name('admin.update');
-Route::delete('/admin/event/{event}', [AdminEventController::class, 'destroy'])->name('admin.destroy');
-
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.detail');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+Route::get('/api/upcoming-events', [EventController::class, 'getUpcomingEvents'])->name('events.upcoming');
+Route::get('/api/upcoming-events/{limit?}', [EventController::class, 'getUpcomingEvents'])->name('events.upcoming.limit');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminEventController::class, 'index'])->name('index');
+    Route::get('/create', [AdminEventController::class, 'create'])->name('create');
+    Route::post('/store', [AdminEventController::class, 'store'])->name('store');
+    Route::get('/{event}', [AdminEventController::class, 'show'])->name('show');
+    Route::get('/{event}/edit', [AdminEventController::class, 'edit'])->name('edit');
+    Route::put('/{event}', [AdminEventController::class, 'update'])->name('update');
+    Route::delete('/{event}', [AdminEventController::class, 'destroy'])->name('destroy');
+});

@@ -6,6 +6,7 @@
     <title>Admin Dashboard - EduConnect</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -463,297 +464,246 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            EduConnect
-        </div>
-        
-        <div class="search-container">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" class="search-input" placeholder="Search courses, users, analytics...">
-        </div>
-        
-        <div class="header-right">
-            <button class="add-course-btn" onclick="showAddCourseModal()">
-                <i class="fas fa-plus"></i> Add Course
-            </button>
-            
-            <div class="profile" onclick="toggleProfileMenu()">
-                <div class="profile-avatar">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <span class="profile-name">Admin</span>
-            </div>
-        </div>
-    </header>
+@extends('layouts.appadmin')
 
-    <!-- Layout -->
-    <div class="layout">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <ul class="sidebar-menu">
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-book"></i>
-                        Add Course
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-users"></i>
-                        Pengguna
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-comments"></i>
-                        Forum Diskusi
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-chart-bar"></i>
-                        Analytics
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="fas fa-trophy"></i>
-                        Top Contributors
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="{{ route('payments.index') }}" class="sidebar-link" target="_self">
-                        <i class="fas fa-money-check-alt"></i>
-                        Manage Upgrade Plan
-                    </a>
-                </li>
+@section('content')
 
-            </ul>
-            
-            <a href="{{ route('auth.login') }}" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
-            </a>
-
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Welcome Section -->
-            <div class="welcome-section">
-                <h1 class="welcome-title">Admin Dashboard</h1>
-                <p class="welcome-subtitle">Kelola platform EduConnect dengan mudah dan efisien</p>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Total Pengguna</div>
-                        <div class="stat-icon blue">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">2,847</div>
-                    <div class="stat-change">+12% dari bulan lalu</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Mata Kuliah Aktif</div>
-                        <div class="stat-icon green">
-                            <i class="fas fa-book"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">156</div>
-                    <div class="stat-change">+8% dari bulan lalu</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Forum Diskusi</div>
-                        <div class="stat-icon purple">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">1,243</div>
-                    <div class="stat-change">+15% dari bulan lalu</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Penyelesaian Kursus</div>
-                        <div class="stat-icon orange">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">89%</div>
-                    <div class="stat-change stat-change negative">-2% dari bulan lalu</div>
-                </div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="charts-section">
-                <div class="chart-card">
-                    <h3 class="chart-title">Aktivitas Pengguna (30 Hari Terakhir)</h3>
-                    <div class="chart-placeholder">
-                        <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i>
-                        Grafik Aktivitas Pengguna
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <h3 class="chart-title">Distribusi Mata Kuliah</h3>
-                    <div class="chart-placeholder">
-                        <i class="fas fa-chart-pie" style="margin-right: 0.5rem;"></i>
-                        Pie Chart Distribusi
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="activity-section">
-                <h3 class="activity-title">Aktivitas Terbaru</h3>
-                
-                <div class="activity-item">
-                    <div class="activity-avatar">JD</div>
-                    <div class="activity-content">
-                        <div class="activity-text">John Doe mendaftar mata kuliah "Advanced React Development"</div>
-                        <div class="activity-time">2 menit yang lalu</div>
-                    </div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-avatar">MA</div>
-                    <div class="activity-content">
-                        <div class="activity-text">Maria Anderson menyelesaikan quiz "Database Fundamentals"</div>
-                        <div class="activity-time">15 menit yang lalu</div>
-                    </div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-avatar">RK</div>
-                    <div class="activity-content">
-                        <div class="activity-text">Robert Kim membuat post baru di Forum Diskusi</div>
-                        <div class="activity-time">1 jam yang lalu</div>
-                    </div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-avatar">SL</div>
-                    <div class="activity-content">
-                        <div class="activity-text">Sarah Lee menambahkan mata kuliah baru "UI/UX Design Principles"</div>
-                        <div class="activity-time">3 jam yang lalu</div>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 1rem;">
-                    <button class="action-btn secondary">
-                        <i class="fas fa-eye"></i>
-                        Lihat Semua Aktivitas
-                    </button>
-                </div>
-            </div>
-        </main>
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">Admin Dashboard</h1>
+        <p class="welcome-subtitle">Kelola platform EduConnect dengan mudah dan efisien</p>
     </div>
 
-    <script>
-        // Sidebar functionality
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('active');
-        }
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">Total Pengguna</div>
+                <div class="stat-icon blue">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ number_format($totalUsers) }}</div>
+            <div class="stat-change">Terdaftar di platform</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">Mata Kuliah</div>
+                <div class="stat-icon green">
+                    <i class="fas fa-book"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ number_format($totalMatkul) }}</div>
+            <div class="stat-change">Tersedia</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">Total Catatan</div>
+                <div class="stat-icon purple">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ number_format($totalNotes) }}</div>
+            <div class="stat-change">Telah dibuat</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">Upgrade Plan</div>
+                <div class="stat-icon orange">
+                    <i class="fas fa-crown"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ number_format($totalUpgradePlans) }}</div>
+            <div class="stat-change">Pengguna premium</div>
+        </div>
+    </div>
 
-        // Profile menu functionality
-        function toggleProfileMenu() {
-            alert('Profile menu clicked! Implement dropdown menu here.');
-        }
+    <!-- Charts Section -->
+    <div class="charts-section">
+        <div class="chart-card">
+            <h3 class="chart-title">Pertumbuhan Pengguna ({{ date('Y') }})</h3>
+            <canvas id="userGrowthChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3 class="chart-title">Distribusi Mata Kuliah</h3>
+            <canvas id="matkulDistChart"></canvas>
+        </div>
+    </div>
 
-        // Add course modal
-        function showAddCourseModal() {
-            alert('Add Course modal would open here!');
-        }
+    <!-- Recent Activity -->
+    <div class="activity-section">
+        <h3 class="activity-title">Aktivitas Terbaru</h3>
+        
+        <div class="activity-item">
+            <div class="activity-avatar">JD</div>
+            <div class="activity-content">
+                <div class="activity-text">John Doe mendaftar mata kuliah "Advanced React Development"</div>
+                <div class="activity-time">2 menit yang lalu</div>
+            </div>
+    </div>
+        <div class="activity-item">
+            <div class="activity-avatar">MA</div>
+            <div class="activity-content">
+                <div class="activity-text">Maria Anderson menyelesaikan quiz "Database Fundamentals"</div>
+                <div class="activity-time">15 menit yang lalu</div>
+            </div>
+    </div>
+        <div class="activity-item">
+            <div class="activity-avatar">RK</div>
+            <div class="activity-content">
+                <div class="activity-text">Robert Kim membuat post baru di Forum Diskusi</div>
+                <div class="activity-time">1 jam yang lalu</div>
+            </div>
+    </div>
+        <div class="activity-item">
+            <div class="activity-avatar">SL</div>
+            <div class="activity-content">
+                <div class="activity-text">Sarah Lee menambahkan mata kuliah baru "UI/UX Design Principles"</div>
+                <div class="activity-time">3 jam yang lalu</div>
+            </div>
+    </div>
+        <div style="text-align: center; margin-top: 1rem;">
+            <button class="action-btn secondary">
+                <i class="fas fa-eye"></i>
+                Lihat Semua Aktivitas
+            </button>
+        </div>
+    </div>
+    @endsection
+</main>
 
-        // Logout functionality
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                // In Laravel, you would redirect to logout route
-                window.location.href = '/admin/logout';
-            }
-        }
+<script>
 
-        // Search functionality
-        document.querySelector('.search-input').addEventListener('input', function(e) {
-            const searchTerm = e.target.value;
-            console.log('Searching for:', searchTerm);
-            // Implement search functionality here
-        });
-
-        // Sidebar link clicks
-        document.querySelectorAll('.sidebar-link').forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (this.getAttribute('href') === '#') {
-                    e.preventDefault(); // hanya untuk link kosong
+    const userCtx = document.getElementById('userGrowthChart').getContext('2d');
+    new Chart(userCtx, {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($monthlyUsers->pluck('month')->map(function($month) {
+                return date('F', mktime(0, 0, 0, $month, 1));
+            })) !!},
+            datasets: [{
+                label: 'Pengguna Baru',
+                data: {{ json_encode($monthlyUsers->pluck('count')) }},
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
                 }
-            });
-        });
+            }
+        }
+    });
 
-        // Real-time updates simulation
-        function updateStats() {
-            const stats = document.querySelectorAll('.stat-value');
-            stats.forEach(stat => {
-                const currentValue = parseInt(stat.textContent.replace(/,/g, ''));
-                const change = Math.floor(Math.random() * 10) - 5;
-                const newValue = Math.max(0, currentValue + change);
-                
-                if (stat.textContent.includes('%')) {
-                    stat.textContent = Math.min(100, Math.max(0, parseInt(stat.textContent) + change)) + '%';
-                } else {
-                    stat.textContent = newValue.toLocaleString();
+    // Mata Kuliah Distribution Chart
+    const matkulCtx = document.getElementById('matkulDistChart').getContext('2d');
+    new Chart(matkulCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {!! json_encode($matkulByProdi->pluck('prodi')) !!},
+            datasets: [{
+                data: {{ json_encode($matkulByProdi->pluck('count')) }},
+                backgroundColor: [
+                    '#2563eb',
+                    '#10b981', 
+                    '#8b5cf6',
+                    '#f59e0b'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
                 }
-            });
-        }
-
-        // Update stats every 30 seconds (for demo purposes)
-        setInterval(updateStats, 30000);
-
-        // Responsive handling
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                document.querySelector('.sidebar').classList.remove('active');
-            }
-        });
-
-        // Add mobile menu toggle (you can add a hamburger button for mobile)
-        function addMobileMenuToggle() {
-            if (window.innerWidth <= 768) {
-                const header = document.querySelector('.header');
-                const menuButton = document.createElement('button');
-                menuButton.innerHTML = '<i class="fas fa-bars"></i>';
-                menuButton.className = 'mobile-menu-btn';
-                menuButton.style.cssText = `
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 1.2rem;
-                    cursor: pointer;
-                    display: block;
-                `;
-                menuButton.onclick = toggleSidebar;
-                header.insertBefore(menuButton, header.firstChild.nextSibling);
             }
         }
-
-        // Initialize mobile menu on load and resize
-        window.addEventListener('load', addMobileMenuToggle);
-        window.addEventListener('resize', function() {
-            const existingBtn = document.querySelector('.mobile-menu-btn');
-            if (existingBtn) existingBtn.remove();
-            addMobileMenuToggle();
+    });
+    // Sidebar functionality
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('active');
+    }
+    // Logout functionality
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            // In Laravel, you would redirect to logout route
+            window.location.href = '/admin/logout';
+        }
+    }
+    // Search functionality
+    document.querySelector('.search-input').addEventListener('input', function(e) {
+        const searchTerm = e.target.value;
+        console.log('Searching for:', searchTerm);
+        // Implement search functionality here
+    });
+    // Sidebar link clicks
+    document.querySelectorAll('.sidebar-link').forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (this.getAttribute('href') === '#') {
+                e.preventDefault(); // hanya untuk link kosong
+            }
         });
-    </script>
+    });
+    // Real-time updates simulation
+    function updateStats() {
+        const stats = document.querySelectorAll('.stat-value');
+        stats.forEach(stat => {
+            const currentValue = parseInt(stat.textContent.replace(/,/g, ''));
+            const change = Math.floor(Math.random() * 10) - 5;
+            const newValue = Math.max(0, currentValue + change);
+            
+            if (stat.textContent.includes('%')) {
+                stat.textContent = Math.min(100, Math.max(0, parseInt(stat.textContent) + change)) + '%';
+            } else {
+                stat.textContent = newValue.toLocaleString();
+            }
+        });
+    }
+    // Update stats every 30 seconds (for demo purposes)
+    setInterval(updateStats, 30000);
+    // Responsive handling
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            document.querySelector('.sidebar').classList.remove('active');
+        }
+    });
+    // Add mobile menu toggle (you can add a hamburger button for mobile)
+    function addMobileMenuToggle() {
+        if (window.innerWidth <= 768) {
+            const header = document.querySelector('.header');
+            const menuButton = document.createElement('button');
+            menuButton.innerHTML = '<i class="fas fa-bars"></i>';
+            menuButton.className = 'mobile-menu-btn';
+            menuButton.style.cssText = `
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                display: block;
+            `;
+            menuButton.onclick = toggleSidebar;
+            header.insertBefore(menuButton, header.firstChild.nextSibling);
+        }
+    }
+    // Initialize mobile menu on load and resize
+    window.addEventListener('load', addMobileMenuToggle);
+    window.addEventListener('resize', function() {
+        const existingBtn = document.querySelector('.mobile-menu-btn');
+        if (existingBtn) existingBtn.remove();
+        addMobileMenuToggle();
+    });
+</script>
 </body>
 </html>

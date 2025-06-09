@@ -45,8 +45,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 }

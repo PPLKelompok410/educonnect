@@ -396,13 +396,9 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            EduConnect
-        </div>
-    </header>
+@extends('layouts.app')
+
+@section('content')
 
     <!-- Main Container -->
     <div class="container">
@@ -745,5 +741,6 @@
             }
         });
     </script>
+@endsection
 </body>
 </html>
