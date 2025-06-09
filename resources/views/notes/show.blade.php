@@ -6,158 +6,338 @@
 $currentUser = session('user');
 @endphp
 
-<div class="max-w-4xl mx-auto py-8 px-4">
-    {{-- Header --}}
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <i class="fas fa-sticky-note text-green-500"></i> {{ $note->judul }}
-        </h2>
-        @if ($currentUser && $note->user_id === $currentUser->id)
-        <div class="flex gap-2">
-            <a href="{{ route('notes.edit', $note->id) }}" class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded shadow text-sm">
-                <i class="fas fa-edit"></i> Edit
-            </a>
-            <form action="{{ route('notes.destroy', $note->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus catatan ini?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow text-sm">
-                    <i class="fas fa-trash"></i> Hapus
-                </button>
-            </form>
-        </div>
-        @endif
-    </div>
-
-    {{-- Informasi Catatan --}}
-    <div class="bg-white rounded shadow p-6 mb-6">
-        <p class="mb-4 text-sm text-gray-700">
-            <strong>File Catatan:</strong>
-            <a href="{{ asset('storage/' . $note->file_path) }}" target="_blank" class="underline text-blue-600 hover:text-blue-800">Lihat File</a>
-        </p>
-
-        {{-- Preview Gambar --}}
-        <div class="text-center mb-4">
-            <img src="{{ asset('storage/' . $note->file_path) }}" alt="Preview Catatan" class="rounded shadow max-w-full h-auto">
-        </div>
-
-        <p class="text-sm text-gray-500">
-            🗓️ Dibagikan oleh: <strong>{{ $note->user->full_name ?? 'Anonymous' }}</strong> | {{ $note->created_at->format('d M Y') }}
-        </p>
-    </div>
-
-    {{-- Form Give Rating --}}
-    <div class="bg-white rounded shadow p-6 mb-6">
-        <h5 class="text-lg font-semibold text-gray-800 mb-3">Berikan Rating</h5>
-        <div 
-            x-data="{
-                rating: {{ $note->ratings->where('user_id', $currentUser->id ?? 0)->first()->rating ?? 0 }},
-                hoverRating: 0,
-                setRating(value) {
-                    this.rating = value;
-                    fetch('{{ route('notes.rate', $note->id) }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ rating: value })
-                    }).then(() => {
-                        // Optional: tampilkan notifikasi sukses
-                    });
-                }
-            }"
-            class="flex items-center gap-2"
-        >
-            <template x-for="star in 5" :key="star">
-                <button type="button" @click="setRating(star)" @mouseover="hoverRating = star" @mouseleave="hoverRating = 0" class="focus:outline-none">
-                    <i 
-                        class="bi"
-                        :class="(hoverRating >= star || (!hoverRating && rating >= star)) ? 'bi-star-fill text-black' : 'bi-star text-black'"
-                        style="font-size: 2rem;"
-                    ></i>
-                </button>
-            </template>
-            <span class="ml-2 text-sm text-gray-600" x-text="rating ? `(${rating}/5)` : ''"></span>
-        </div>
-        <div class="mt-4">
-            <p class="text-sm text-gray-600">
-                Rating rata-rata: {{ number_format($note->averageRating(), 2) ?? '-' }} dari {{ $note->totalReviewer() }} reviewer
-            </p>
-        </div>
-    </div>
-
-    {{-- Komentar --}}
-    <div class="bg-white rounded shadow p-6">
-        <h5 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <i class="bi bi-chat-left-text"></i> Komentar
-        </h5>
-
-        {{-- Form Tambah Komentar --}}
-        <form method="POST" action="{{ route('note-comments.store', ['note' => $note->id]) }}" class="mb-6">
-            @csrf
-            <textarea name="content" rows="3" class="w-full border rounded p-3 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Tulis komentar..." required></textarea>
-            <button type="submit" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow text-sm">
-                <i class="bi bi-send"></i> Kirim
-            </button>
-        </form>
-
-        @forelse($note->comments as $comment)
-        <div x-data="{ editing: false, editedContent: @js($comment->content) }" class="bg-gray-50 rounded p-4 mb-4 shadow-sm">
-            <div class="flex justify-between items-start">
-                <div class="w-full">
-                    <strong class="text-gray-800">{{ $comment->user->full_name ?? 'Anonim' }}</strong>
-                    <p class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</p>
-
-                    {{-- Mode Edit --}}
-                    <div x-show="editing" class="mt-2">
-                        <form method="POST" action="{{ route('note-comments.update', $comment->id) }}">
-                            @csrf
-                            @method('PUT')
-                            <textarea name="content" x-model="editedContent"
-                                class="w-full p-2 border rounded text-sm text-gray-700" rows="3"></textarea>
-                            <div class="mt-2 flex gap-2">
-                                <button type="submit"
-                                    class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">
-                                    Simpan
-                                </button>
-                                <button type="button" x-on:click="editing = false"
-                                    class="px-3 py-1 border text-xs rounded hover:bg-gray-100">
-                                    Batal
-                                </button>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="max-w-5xl mx-auto py-8 px-4">
+        
+        {{-- Header Section --}}
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                            {{ $note->judul }}
+                        </h1>
+                        <div class="flex items-center gap-4 text-white/90">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="white" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <span class="font-medium text-white">{{ $note->user->full_name ?? 'Anonymous' }}</span>
                             </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="white" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-white">{{ $note->created_at->format('d M Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @if ($currentUser && $note->user_id === $currentUser->id)
+                    <div class="flex gap-3">
+                        <a href="{{ route('notes.edit', $note->id) }}" 
+                           class="group bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-all duration-300 backdrop-blur-sm">
+                            <svg class="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            <span class="font-medium">Edit</span>
+                        </a>
+                        <form action="{{ route('notes.destroy', $note->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus catatan ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" 
+                                    class="group bg-red-500/20 hover:bg-red-500/30 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-all duration-300 backdrop-blur-sm border border-red-300/30">
+                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                <span class="font-medium">Hapus</span>
+                            </button>
                         </form>
                     </div>
-
-                    {{-- Mode Tampilan --}}
-                    <p x-show="!editing" class="mt-2 text-sm text-gray-700" x-text="editedContent"></p>
+                    @endif
                 </div>
-
-                {{-- Tombol Edit / Hapus hanya untuk pemilik --}}
-                @if ($currentUser && $comment->user_id === $currentUser->id)
-                <div class="flex gap-2 ml-4">
-                    <button x-on:click="editing = true"
-                        class="px-3 py-1 border border-blue-500 text-blue-500 text-xs rounded hover:bg-blue-100 transition">
-                        Edit
-                    </button>
-
-                    <form action="{{ route('note-comments.destroy', $comment->id) }}" method="POST"
-                        onsubmit="return confirm('Yakin ingin menghapus komentar ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="px-3 py-1 border border-red-500 text-red-500 text-xs rounded hover:bg-red-100 transition">
-                            Hapus
-                        </button>
-                    </form>
-                </div>
-                @endif
             </div>
         </div>
-        @empty
-        <p class="text-gray-500 text-sm">💬 Belum ada komentar. Jadilah yang pertama!</p>
-        @endforelse
 
+        {{-- Note Content Section --}}
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+            <div class="p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                        Catatan
+                    </h2>
+                    <a href="{{ asset('images/' . $note->file_path) }}" 
+                       target="_blank" 
+                       class="group bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <svg class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span class="font-medium">Unduh</span>
+                    </a>
+                </div>
 
+                {{-- Image Preview --}}
+                <div class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                    <img src="{{ asset('images/' . $note->file_path) }}" 
+                         alt="Preview Catatan" 
+                         class="w-full h-auto object-contain max-h-96 mx-auto">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {{-- Rating Section --}}
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                        Berikan Rating
+                    </h3>
+                    
+                    <div 
+                        x-data="{
+                            rating: {{ $note->ratings->where('user_id', $currentUser->id ?? 0)->first()->rating ?? 0 }},
+                            hoverRating: 0,
+                            setRating(value) {
+                                this.rating = value;
+                                fetch('{{ route('notes.rate', $note->id) }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ rating: value })
+                                }).then(() => {
+                                    // Success feedback
+                                    if (typeof Swal !== 'undefined') {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Rating berhasil diberikan!',
+                                            showConfirmButton: false,
+                                            timer: 1500,
+                                            toast: true,
+                                            position: 'top-end'
+                                        });
+                                    }
+                                });
+                            }
+                        }"
+                        class="mb-6"
+                    >
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <template x-for="star in 5" :key="star">
+                                <button type="button" 
+                                        @click="setRating(star)" 
+                                        @mouseover="hoverRating = star" 
+                                        @mouseleave="hoverRating = 0" 
+                                        class="focus:outline-none transition-all duration-200 hover:scale-110">
+                                    <svg class="w-10 h-10 transition-colors duration-200"
+                                         :class="(hoverRating >= star || (!hoverRating && rating >= star)) ? 'text-yellow-400' : 'text-gray-300'"
+                                         fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                </button>
+                            </template>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-lg font-semibold text-gray-700" x-text="rating ? `${rating}/5` : 'Belum dinilai'"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center gap-2 mb-2">
+                                <div class="flex items-center">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                    <svg class="w-4 h-4 {{ $i <= ($note->averageRating() ?? 0) ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    @endfor
+                                </div>
+                                <span class="font-bold text-gray-700">{{ number_format($note->averageRating() ?? 0, 1) }}</span>
+                            </div>
+                            <p class="text-sm text-gray-600">dari {{ $note->totalReviewer() }} reviewer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Comments Section --}}
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                        </div>
+                        Komentar ({{ $note->comments->count() }})
+                    </h3>
+
+                    {{-- Add Comment Form --}}
+                    <form method="POST" action="{{ route('note-comments.store', ['note' => $note->id]) }}" class="mb-8">
+                        @csrf
+                        <div class="bg-gray-50 rounded-xl p-4 border-2 border-gray-100 focus-within:border-blue-300 transition-colors duration-300">
+                            <textarea name="content" 
+                                      rows="4" 
+                                      class="w-full bg-transparent border-0 resize-none focus:outline-none text-gray-700 placeholder-gray-500" 
+                                      placeholder="Bagikan pemikiran Anda tentang catatan ini..." 
+                                      required></textarea>
+                        </div>
+                        <div class="flex justify-end mt-4">
+                            <button type="submit" 
+                                    class="group bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                                <span class="font-medium">Kirim Komentar</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    {{-- Comments List --}}
+                    <div class="space-y-4">
+                        @forelse($note->comments as $comment)
+                        <div x-data="{ editing: false, editedContent: @js($comment->content) }" 
+                             class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-6 border border-gray-100 hover:shadow-md transition-all duration-300">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800">{{ $comment->user->full_name ?? 'Anonim' }}</h4>
+                                            <p class="text-sm text-gray-500">{{ $comment->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Edit Mode --}}
+                                    <div x-show="editing" class="mt-4">
+                                        <form method="POST" action="{{ route('note-comments.update', $comment->id) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="bg-white rounded-xl p-4 border-2 border-blue-200">
+                                                <textarea name="content" 
+                                                          x-model="editedContent"
+                                                          class="w-full border-0 resize-none focus:outline-none text-gray-700" 
+                                                          rows="3"></textarea>
+                                            </div>
+                                            <div class="flex gap-3 mt-4">
+                                                <button type="submit"
+                                                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-300">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    Simpan
+                                                </button>
+                                                <button type="button" 
+                                                        x-on:click="editing = false"
+                                                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                                                    Batal
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    {{-- Display Mode --}}
+                                    <div x-show="!editing" class="mt-3">
+                                        <p class="text-gray-700 leading-relaxed" x-text="editedContent"></p>
+                                    </div>
+                                </div>
+
+                                {{-- Action Buttons --}}
+                                @if ($currentUser && $comment->user_id === $currentUser->id)
+                                <div class="flex gap-2 ml-4">
+                                    <button x-on:click="editing = true"
+                                            class="group p-2 text-blue-500 hover:bg-blue-100 rounded-lg transition-all duration-300">
+                                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+
+                                    <form action="{{ route('note-comments.destroy', $comment->id) }}" method="POST"
+                                          onsubmit="return confirm('Yakin ingin menghapus komentar ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="group p-2 text-red-500 hover:bg-red-100 rounded-lg transition-all duration-300">
+                                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <div class="text-center py-12">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-600 mb-2">Belum ada komentar</h4>
+                            <p class="text-gray-500">Jadilah yang pertama untuk memberikan komentar!</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+/* Custom animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #3b82f6, #6366f1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #2563eb, #4f46e5);
+}
+</style>
+
 @endsection

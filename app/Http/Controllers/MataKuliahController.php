@@ -11,6 +11,11 @@ class MataKuliahController
 {
     public function index()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
+
         $mataKuliah = MataKuliah::all();
         $prodis = MataKuliah::select('prodi')->distinct()->pluck('prodi');
 
