@@ -22,8 +22,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(MataKuliahSeeder::class);
         $this->call(NoteSeeder::class);
-        $this->call([
-            PenggunaSeeder::class,
-        ]);
+        $this->call(PenggunaSeeder::class);
     }
 }

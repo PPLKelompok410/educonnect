@@ -15,20 +15,24 @@ class PaymentController extends Controller
 {
     public function index()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         // Ambil semua data payments dengan pagination
         $payments = Payment::latest()->paginate(10);
-        
+
         // Hitung statistik
         $totalPayments = Payment::count();
         $totalRevenue = Payment::sum('price');
         $totalPackages = Payment::distinct('package')->count();
         $totalMethods = Payment::distinct('payment_method')->count();
-        
+
         return view('payments.index', compact(
             'payments',
-            'totalPayments', 
-            'totalRevenue', 
-            'totalPackages', 
+            'totalPayments',
+            'totalRevenue',
+            'totalPackages',
             'totalMethods'
         ));
     }
@@ -47,14 +51,14 @@ class PaymentController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'integer', 'min:0'],
         ]);
-    
+
         Payment::create([
             'payment_method' => $request->payment_method,
             'package' => $request->package,
             'description' => $request->description,
             'price' => $request->price,
         ]);
-    
+
         return redirect()->route('payments.index')->with('success', 'Payment berhasil disimpan.');
     }
 
@@ -137,23 +141,23 @@ class PaymentController extends Controller
                 'payment_method' => ['required', Rule::in(['GoPay', 'OVO', 'DANA', 'Transfer Bank BCA', 'Transfer Bank BRI', 'Transfer Bank BNI', 'Transfer Bank Mandiri'])],
                 'agree_to_terms' => ['required', 'accepted']
             ]);
-        
+
             $payment = Payment::findOrFail($plan);
             $user = session('user');
-        
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'User tidak ditemukan. Silakan login kembali.'
                 ], 401);
             }
-        
+
             // Calculate totals
             $subtotal = $payment->price;
             $adminFee = 2500;
             $tax = round($subtotal * 0.11);
             $total = $subtotal + $adminFee + $tax;
-        
+
             // Create transaction
             $transaction = Transaction::create([
                 'transaction_id' => 'EDU-' . date('Y') . '-' . Str::padLeft(Transaction::count() + 1, 6, '0'),
@@ -165,18 +169,16 @@ class PaymentController extends Controller
                 'tax' => $tax,
                 'total' => $total
             ]);
-        
+
             return response()->json([
                 'success' => true,
                 'redirect_url' => route('payments.success', ['transaction' => $transaction->id])
             ], 200);
-        
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
             ], 422);
-
         } catch (\Exception $e) {
             \Log::error('Payment Processing Error: ' . $e->getMessage());
 
@@ -197,7 +199,7 @@ class PaymentController extends Controller
             'user' => $transaction->pengguna // Changed from user to pengguna
         ]);
 
-        return $pdf->download('EDU-Receipt-'.$transaction->transaction_id.'.pdf');
+        return $pdf->download('EDU-Receipt-' . $transaction->transaction_id . '.pdf');
     }
 
     public function showSuccess(Transaction $transaction)
@@ -208,7 +210,7 @@ class PaymentController extends Controller
             'user' => $transaction->pengguna // Add this line to pass user data
         ]);
     }
-    
+
     public function cancelSubscription()
     {
         try {
@@ -229,7 +231,6 @@ class PaymentController extends Controller
 
             return redirect()->route('upgrade.plans')
                 ->with('error', 'Tidak ada langganan aktif yang ditemukan');
-
         } catch (\Exception $e) {
             \Log::error('Subscription Cancellation Error: ' . $e->getMessage());
 

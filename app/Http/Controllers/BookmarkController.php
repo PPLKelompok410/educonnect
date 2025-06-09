@@ -11,6 +11,11 @@ class BookmarkController extends Controller
 {
     public function index()
     {
+
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $bookmarks = Bookmark::with('note.user')
             ->where('user_id', session('user')->id)
             ->latest()
@@ -40,5 +45,4 @@ class BookmarkController extends Controller
 
         return response()->json(['status' => 'added']);
     }
-
 }

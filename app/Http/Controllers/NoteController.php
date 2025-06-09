@@ -13,6 +13,10 @@ class NoteController
 {
     public function index(MataKuliah $matkul)
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $notes = Note::with(['user', 'bookmarks'])
             ->where('matkul_id', $matkul->id)
             ->where('type', 'galeri')
@@ -24,6 +28,10 @@ class NoteController
 
     public function create(MataKuliah $matkul)
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         return view('notes.create', compact('matkul'));
     }
 
@@ -49,6 +57,10 @@ class NoteController
 
     public function show($id)
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $note = Note::findOrFail($id);
         return view('notes.show', compact('note'));
     }
