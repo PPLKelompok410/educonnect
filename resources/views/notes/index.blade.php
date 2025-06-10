@@ -65,7 +65,7 @@
                             frameborder="0"></iframe>
                 @endif
           @else
-          <img src="{{ asset('images/default-note.png') }}" 
+          <img src="{{ asset('images/default-note.jpg') }}" 
                alt="Default Preview" 
                class="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110 bg-gradient-to-br from-gray-100 to-gray-200">
           @endif

@@ -306,7 +306,7 @@
     <!-- Welcome Section -->
     <div class="flex justify-between items-center mb-8">
       <div>
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">Good day, Aswangga King!</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Good day, {{$user->full_name}}!</h2>
         <p class="text-gray-600">We wish you have a productive day!</p>
       </div>
       <!-- Animated Text Box - Menggantikan kotak "Harusnya disini" -->
