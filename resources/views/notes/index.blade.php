@@ -58,10 +58,10 @@
                 @if (Str::endsWith($previewFile->file_path, ['jpg', 'jpeg', 'png', 'gif']))
                     <img src="{{ asset($previewFile->file_path) }}" 
                         alt="Preview Gambar" 
-                        class="w-full h-60 object-cover rounded-xl shadow-lg">
+                        class="w-full h-60 object-cover shadow-lg">
                 @elseif (Str::endsWith($previewFile->file_path, ['pdf']))
                     <iframe src="{{ asset($previewFile->file_path) }}" 
-                            class="w-full h-60 rounded-xl shadow-lg" 
+                            class="w-full h-60 shadow-lg" 
                             frameborder="0"></iframe>
                 @endif
           @else
