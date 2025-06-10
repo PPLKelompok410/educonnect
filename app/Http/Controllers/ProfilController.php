@@ -14,6 +14,10 @@ class ProfilController
      */
     public function index()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $user = Pengguna::find(session('user')->id);
 
         // Ubah dari firstOrNew ke firstOrCreate
@@ -59,6 +63,11 @@ class ProfilController
      */
     public function show(Profil $profile)
     {
+
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         // Retrieve the profile by its ID
         $profile = Profil::findOrFail($profile);
 

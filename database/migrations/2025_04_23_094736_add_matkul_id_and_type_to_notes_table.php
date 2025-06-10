@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('notes', function (Blueprint $table) {
-            $table->string('type')->default('galeri')->after('file_path');
+            $table->string('type')->default('galeri');
         });
     }
 

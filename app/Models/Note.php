@@ -12,8 +12,8 @@ class Note extends Model
     protected $fillable = [
         'user_id',
         'judul',
-        'file_path',
-        'matkul_id',
+        'deskripsi',
+        'matkul_id'
     ];
 
     public function user()
@@ -49,5 +49,10 @@ class Note extends Model
     public function totalReviewer()
     {
         return $this->ratings()->count();
+    }
+
+    public function files()
+    {
+        return $this->hasMany(NoteFile::class);
     }
 }

@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notes', function (Blueprint $table) {
+        Schema::create('note_files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('penggunas')->onDelete('cascade');
-            $table->string('judul');
-            $table->string('deskripsi');
+            $table->foreignId('note_id')->constrained()->onDelete('cascade');
+            $table->string('file_path');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notes');
+        Schema::dropIfExists('note_files');
     }
 };
