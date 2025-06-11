@@ -245,17 +245,6 @@
       }
     }
 
-    .animated-word::after {
-      content: 'Connect';
-      animation: changeWordContent 6s infinite;
-    }
-
-    @keyframes changeWordContent {
-      0%, 30% { content: 'Connect'; }
-      38%, 63% { content: 'Share'; }
-      71%, 96% { content: 'Grow'; }
-    }
-
     /* Floating particles effect */
     .floating-particle {
       position: absolute;
@@ -297,6 +286,16 @@
   </style>
 </head>
 
+<script>
+  const words = ['Connect', 'Share', 'Grow'];
+  let i = 0;
+
+  setInterval(() => {
+    i = (i + 1) % words.length;
+    document.getElementById('animatedWord').textContent = words[i];
+  }, 2000); // ganti tiap 2 detik
+</script>
+
 <body>
 @extends('layouts.app')
 
@@ -311,13 +310,13 @@
       </div>
       <!-- Animated Text Box - Menggantikan kotak "Harusnya disini" -->
       <div class="w-60">
-        <div class="animated-text-box">
-          <div class="floating-particle"></div>
-          <div class="floating-particle"></div>
-          <div class="floating-particle"></div>
-          <div class="animated-word"></div>
-        </div>
+      <div class="animated-text-box relative">
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div id="animatedWord" class="animated-word">Connect</div>
       </div>
+    </div>
     </div>
 
     <!-- Image Carousel Section -->
