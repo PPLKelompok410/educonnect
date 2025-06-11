@@ -29,12 +29,9 @@ class MataKuliahController
         if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
-    
+
         $matkul = MataKuliah::with(['comments.user'])->findOrFail($id);
-        
-        // Ambil data user dari session
         $user = Pengguna::find(session('user_id'));
-    
         return view('matkul.discussion', compact('matkul', 'user'));
     }
 

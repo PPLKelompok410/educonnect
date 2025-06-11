@@ -13,6 +13,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReplyController;
 use App\Models\Note;
 use App\Models\Pengguna;
 
@@ -140,3 +141,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/{event}', [AdminEventController::class, 'update'])->name('update');
     Route::delete('/{event}', [AdminEventController::class, 'destroy'])->name('destroy');
 });
+
+Route::post('/replies/{comment}', [ReplyController::class, 'store'])->name('replies.store');
+Route::get('/replies/{reply}/edit', [ReplyController::class, 'edit'])->name('replies.edit');
+Route::put('/replies/{reply}', [ReplyController::class, 'update'])->name('replies.update');
+Route::delete('/replies/{reply}', [ReplyController::class, 'destroy'])->name('replies.destroy');

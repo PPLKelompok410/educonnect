@@ -50,11 +50,6 @@
             font-size: 1.8rem;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
         .header-btn {
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: white;
