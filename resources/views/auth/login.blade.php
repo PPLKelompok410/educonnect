@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | EduConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -22,7 +23,7 @@
             display: flex;
             width: 100%;
             height: 100%;
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.4s ease; /* Lebih cepat: 0.4s */
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.4s ease;
         }
         .left {
             flex: 1;
@@ -33,7 +34,7 @@
             justify-content: center;
             align-items: center;
             padding: 2rem;
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Lebih cepat: 0.3s */
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
         .left h1 {
             font-size: 48px;
@@ -54,20 +55,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease; /* Lebih cepat: 0.3s */
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
         }
         .form-container {
             width: 80%;
             max-width: 400px;
-            transition: transform 0.25s ease, opacity 0.25s ease; /* Lebih cepat: 0.25s */
+            transition: transform 0.25s ease, opacity 0.25s ease;
         }
         .form-container h2 {
             margin-bottom: 1.5rem;
             font-size: 1.5rem;
             color: #000;
         }
-        input[type="email"],
-        input[type="password"] {
+        input[type="email"] {
             width: 100%;
             padding: 0.75rem 0;
             margin-bottom: 1.5rem;
@@ -78,8 +78,7 @@
             background: transparent;
             transition: border-color 0.3s ease;
         }
-        input[type="email"]:focus,
-        input[type="password"]:focus {
+        input[type="email"]:focus {
             border-bottom-color: #2563eb;
         }
 
@@ -137,6 +136,80 @@
             transform: translateX(-50px) scale(0.95);
             opacity: 0;
         }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            border: 1px solid #86efac;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            border: 1px solid #fecaca;
+        }
+
+        .password-field {
+            position: relative;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .password-field input {
+            width: 100%;
+            padding: 0.75rem 0;
+            padding-right: 2.5rem;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .password-field input:focus {
+            border-bottom-color: #2563eb;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0.5rem;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .toggle-password:hover {
+            color: #2563eb;
+        }
+
+        /* Hilangkan ikon mata default browser */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+        
+        input[type="password"]::-webkit-credentials-auto-fill-button {
+            display: none !important;
+        }
+        
+        input[type="password"]::-webkit-strong-password-auto-fill-button {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -152,12 +225,15 @@
                 <form method="POST" action="{{ route('auth.login_process') }}">
                     @csrf
                     @if(session('message'))
-                    <div class="alert" style="background-color: #f8d7da; color: #721c24; padding: 0.75rem; margin-bottom: 1rem; border-radius: 5px; font-size: 0.9rem;">
+                    <div class="{{ str_contains(session('message'), 'berhasil') ? 'alert-success' : 'alert-error' }}">
                         {{ session('message') }}
                     </div>
                     @endif
                     <input type="email" name="email" placeholder="Email" required>
-                    <input type="password" name="password" placeholder="Kata sandi" required>
+                    <div class="password-field">
+                        <input type="password" name="password" id="password" placeholder="Kata sandi" required autocomplete="current-password">
+                        <i class="toggle-password fas fa-eye" onclick="togglePassword('password')"></i>
+                    </div>
 
                     <div class="form-links">
                         <a href="{{ route('auth.forgot_password') }}">Lupa Password?</a>
@@ -198,6 +274,21 @@
                 window.location.href = targetUrl;
             }, 30); // Total durasi animasi hanya 400ms
         });
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
     </script>
 </body>
 </html>

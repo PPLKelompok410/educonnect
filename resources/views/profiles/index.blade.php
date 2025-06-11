@@ -540,10 +540,6 @@
                         <a href="{{ route('profiles.edit', $profile->id) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i> Edit Profil
                         </a>
-                        
-                        <a href="{{ route('dashboard') }}" class="btn btn-secondary">
-                            <i class="fas fa-home"></i> Kembali ke Dashboard
-                        </a>
                     </div>
                 </div>
             </form>

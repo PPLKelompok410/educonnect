@@ -306,7 +306,7 @@
     <!-- Welcome Section -->
     <div class="flex justify-between items-center mb-8">
       <div>
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">Good day, Aswangga King!</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Good day, {{ session('user')->full_name }}!</h2>
         <p class="text-gray-600">We wish you have a productive day!</p>
       </div>
       <!-- Animated Text Box - Menggantikan kotak "Harusnya disini" -->
@@ -382,39 +382,44 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Top Contributors -->
       <div class="card p-6">
-        <h2 class="card-header mb-4">Top Contributors</h2>
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <img src="https://images.unsplash.com/photo-1494790108755-2616b9a68bb3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80" alt="Contributor" class="top-contributor-avatar mr-3">
-              <div>
-                <p class="font-medium">Queen PM Kak Fathya</p>
-                <p class="text-sm text-gray-600">120 points • Web Development</p>
-              </div>
-            </div>
-            <span class="text-xs bg-blue-100 text-main-blue py-1 px-2 rounded-full">#1</span>
+          <h2 class="card-header mb-4">Top Contributors</h2>
+          <div class="space-y-4">
+              @forelse($topContributors as $index => $contributor)
+                  <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                              {{ substr($contributor->full_name, 0, 2) }}
+                          </div>
+                          <div>
+                              <p class="font-medium">{{ $contributor->full_name }}</p>
+                              <p class="text-sm text-gray-600">
+                                  {{ $contributor->total_contributions }} points • 
+                                  @if($contributor->notes_count > 0)
+                                      {{ $contributor->notes_count }} notes
+                                  @elseif($contributor->comments_count > 0)
+                                      {{ $contributor->comments_count }} comments
+                                  @else
+                                      Active Member
+                                  @endif
+                              </p>
+                          </div>
+                      </div>
+                      <span class="text-xs bg-blue-100 text-main-blue py-1 px-2 rounded-full">
+                          #{{ $index + 1 }}
+                      </span>
+                  </div>
+              @empty
+                  <p class="text-gray-500 text-center">Belum ada kontributor</p>
+              @endforelse
+
+              <a href="{{ route('topcontributors.index') }}" 
+                 class="text-main-blue font-medium text-sm mt-4 inline-flex items-center hover:underline">
+                  Lihat Semua Kontributor
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+              </a>
           </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80" alt="Contributor" class="top-contributor-avatar mr-3">
-              <div>
-                <p class="font-medium">Aswangga Asprak of the year</p>
-                <p class="text-sm text-gray-600">95 points • Database Design</p>
-              </div>
-            </div>
-            <span class="text-xs bg-blue-100 text-main-blue py-1 px-2 rounded-full">#2</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1270&q=80" alt="Contributor" class="top-contributor-avatar mr-3">
-              <div>
-                <p class="font-medium">Caca Umayah</p>
-                <p class="text-sm text-gray-600">87 points • Laravel Expert</p>
-              </div>
-            </div>
-            <span class="text-xs bg-blue-100 text-main-blue py-1 px-2 rounded-full">#3</span>
-          </div>
-        </div>
       </div>
 
       <!-- Latest Notes -->
@@ -425,7 +430,9 @@
                   <div class="border-l-4 border-main-blue pl-3">
                       <p class="font-medium">{{ $note->judul }}</p>
                       <p class="text-sm text-gray-600">
-                          {{ $note->created_at->diffForHumans() }} • {{ $note->matkul->nama }}
+                          {{ $note->created_at->diffForHumans() }} • 
+                          {{ $note->matkul->nama }} • 
+                          by {{ $note->user->full_name }}
                       </p>
                   </div>
               @empty
@@ -434,7 +441,7 @@
           </div>
           
           <a href="{{ route('matkul.index') }}" 
-             class="text-main-blue font-medium text-sm mt-4 inline-flex items-center hover:underline">
+              class="text-main-blue font-medium text-sm mt-4 inline-flex items-center hover:underline">
               Lihat Semua Catatan
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
