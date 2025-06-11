@@ -212,7 +212,7 @@
         <div class="content">
             <!-- Event Image -->
             @if($event->image)
-                <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="event-image">
+                <img src="{{ asset($event->image) }}" alt="{{ $event->title }}" class="event-image">
             @else
                 <div class="no-image">
                     <i class="fas fa-image"></i>

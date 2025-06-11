@@ -109,20 +109,11 @@
                             <ul class="feature-list font-poppins text-sm">
                                 @if($payment->package == 'Genius')
                                 <li><svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Akses ke semua materi premium
-                                </li>
-                                <li><svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Konsultasi dengan tutor
+                                    Per hari bisa download 5 catatan
                                 </li>
                                 @else
                                 <li><svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Semua fitur Genius
-                                </li>
-                                <li><svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Prioritas bantuan 24/7
-                                </li>
-                                <li><svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Sertifikat digital
+                                    Per hari bisa download 10 catatan
                                 </li>
                                 @endif
                             </ul>

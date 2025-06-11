@@ -59,11 +59,17 @@
 
     <!-- Legend -->
     <div class="mt-10 bg-white p-6 rounded-lg shadow-md flex flex-wrap justify-center gap-6 text-blue-700 text-sm">
-        <div class="flex items-center gap-2"><i class="bi bi-journal-text"></i> Catatan</div>
-        <div class="flex items-center gap-2"><i class="bi bi-chat-dots"></i> Komentar Catatan</div>
-        <div class="flex items-center gap-2"><i class="bi bi-people"></i> Komentar Forum</div>
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full shadow flex items-center justify-center bg-white text-blue-700 font-bold">#</div> Poin
+            <i class="bi bi-journal-text"></i> Catatan <span class="text-xs text-green-600 font-semibold">(3 poin)</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <i class="bi bi-chat-dots"></i> Komentar Catatan <span class="text-xs text-green-600 font-semibold">(2 poin)</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <i class="bi bi-people"></i> Komentar Forum <span class="text-xs text-green-600 font-semibold">(1 poin)</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full shadow flex items-center justify-center bg-white text-blue-700 font-bold">#</div> Total Poin
         </div>
     </div>
 </div>

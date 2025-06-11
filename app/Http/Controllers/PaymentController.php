@@ -26,34 +26,29 @@ class PaymentController extends Controller
         $totalPayments = Payment::count();
         $totalRevenue = Payment::sum('price');
         $totalPackages = Payment::distinct('package')->count();
-        $totalMethods = Payment::distinct('payment_method')->count();
 
         return view('payments.index', compact(
             'payments',
             'totalPayments',
             'totalRevenue',
             'totalPackages',
-            'totalMethods'
         ));
     }
 
     public function create()
     {
-        $methods = ['GoPay', 'OVO', 'DANA', 'Transfer Bank BCA', 'Transfer Bank BRI', 'Transfer Bank BNI', 'Transfer Bank Mandiri', 'Credit Card'];
-        return view('payments.create', compact('methods'));
+        return view('payments.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'payment_method' => ['required', Rule::in(['GoPay', 'OVO', 'DANA', 'Transfer Bank BCA', 'Transfer Bank BRI', 'Transfer Bank BNI', 'Transfer Bank Mandiri', 'Credit Card'])],
             'package' => ['required', Rule::in(['Genius', 'Professor'])],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'integer', 'min:0'],
         ]);
 
         Payment::create([
-            'payment_method' => $request->payment_method,
             'package' => $request->package,
             'description' => $request->description,
             'price' => $request->price,
@@ -69,14 +64,12 @@ class PaymentController extends Controller
 
     public function edit(Payment $payment)
     {
-        $methods = ['GoPay', 'OVO', 'DANA', 'Transfer Bank BCA', 'Transfer Bank BRI', 'Transfer Bank BNI', 'Transfer Bank Mandiri', 'Credit Card'];
-        return view('payments.edit', compact('payment', 'methods'));
+        return view('payments.edit', compact('payment'));
     }
 
     public function update(Request $request, Payment $payment)
     {
         $request->validate([
-            'payment_method' => ['required', Rule::in(['GoPay', 'OVO', 'DANA', 'Transfer Bank BCA', 'Transfer Bank BRI', 'Transfer Bank BNI', 'Transfer Bank Mandiri', 'Credit Card'])],
             'package' => ['required', Rule::in(['Genius', 'Professor'])],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'integer', 'min:0'],

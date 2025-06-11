@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Forum Diskusi (' . $matkul->nama . ')')
+@section('title', 'Forum Diskusi - ' . $matkul->nama)
 
 @section('content')
 <div class="container mx-auto px-4 md:px-10 mt-10">
@@ -28,17 +28,19 @@
         <p class="text-gray-800 mb-3">{{ $comment->comment }}</p>
         <div class="flex justify-between items-center text-sm text-gray-500">
             <span>
-                oleh <strong class="text-gray-700">{{ $comment->user->full_name }}</strong>
-                pada {{ $comment->created_at->format('d M Y, H:i') }}
+                oleh <strong class="text-gray-700">{{ $comment->user->full_name }}</strong> |
+                {{ $comment->created_at->locale('id')->diffForHumans() }} {{-- Menggunakan diffForHumans() --}}
             </span>
 
-            {{-- @if(Auth::id() === $comment->user_id) --}}
+            {{-- Show edit/delete only for comment owner --}}
+            @if(session('user_id') === $comment->user_id)
             <div class="flex gap-2">
                 <a href="{{ route('comments.edit', $comment->id) }}"
                     class="px-3 py-1 border border-blue-500 text-blue-500 text-sm rounded hover:bg-blue-100 transition">
                     <i class="bi bi-pencil-square"></i> Edit
                 </a>
-                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" onsubmit="return confirm('Yakin hapus komentar ini?')">
+                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" 
+                      onsubmit="return confirm('Yakin hapus komentar ini?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit"
@@ -47,7 +49,7 @@
                     </button>
                 </form>
             </div>
-            {{-- @endif --}}
+            @endif
         </div>
     </div>
     @empty
@@ -56,22 +58,31 @@
 
     <hr class="my-8 border-gray-300">
 
-    <div class="mt-6">
-        <h4 class="text-xl font-semibold flex items-center gap-2">
-            <i class="bi bi-plus-circle"></i> Tambah Topik Diskusi
-        </h4>
-        <form action="{{ route('comments.store', $matkul->id) }}" method="POST" class="mt-4">
-            @csrf
-            <div class="mb-4">
-                <textarea name="comment" id="comment" rows="3"
-                    class="w-full p-3 border border-gray-300 rounded-md focus:ring focus:ring-green-200 focus:outline-none"
-                    placeholder="Tulis topikmu..." required></textarea>
-            </div>
-            <button type="submit"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-                <i class="bi bi-send"></i> Kirim
-            </button>
-        </form>
-    </div>
+    @if(isset($user) && $user)
+        <!-- Form tambah komentar hanya muncul jika user login -->
+        <div class="mt-6">
+            <h4 class="text-xl font-semibold flex items-center gap-2">
+                <i class="bi bi-plus-circle"></i> Tambah Topik Diskusi
+            </h4>
+            <form action="{{ route('comments.store', $matkul->id) }}" method="POST" class="mt-4">
+                @csrf
+                <div class="mb-4">
+                    <textarea name="comment" id="comment" rows="3" 
+                        class="w-full p-3 border border-gray-300 rounded-md focus:ring focus:ring-green-200 focus:outline-none"
+                        placeholder="Tulis topikmu..." required></textarea>
+                </div>
+                <button type="submit"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                    <i class="bi bi-send"></i> Kirim
+                </button>
+            </form>
+        </div>
+    @else
+        <div class="text-center py-4">
+            <p>Silakan <a href="{{ route('auth.login') }}" class="text-blue-600 hover:underline">login</a> untuk berpartisipasi dalam diskusi</p>
+        </div>
+    @endif
+
+
 </div>
 @endsection

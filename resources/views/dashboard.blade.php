@@ -306,7 +306,7 @@
     <!-- Welcome Section -->
     <div class="flex justify-between items-center mb-8">
       <div>
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">Good day, {{ session('user')->full_name }}!</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Good day, {{ $user->full_name }}!</h2>
         <p class="text-gray-600">We wish you have a productive day!</p>
       </div>
       <!-- Animated Text Box - Menggantikan kotak "Harusnya disini" -->
@@ -506,7 +506,7 @@
               <div class="card event-card p-0 overflow-hidden" onclick="handleEventDetail(${event.id})">
                 <div class="relative">
                   ${event.image 
-                    ? `<img src="/storage/${event.image}" alt="${event.title}" class="w-full h-40 object-cover">`
+                    ? `<img src="${event.image}" alt="${event.title}" class="w-full h-40 object-cover">`
                     : `<div class="w-full h-40 bg-blue-100 flex items-center justify-center text-4xl">🎉</div>`
                   }
                   <div class="absolute top-3 left-3 event-date text-white text-xs px-3 py-1 rounded-full">

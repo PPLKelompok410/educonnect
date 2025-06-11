@@ -23,8 +23,17 @@ class MataKuliahController
 
     public function discussion($id)
     {
+        // Cek login
+        if (!session()->has('user_id')) {
+            return redirect()->route('auth.login');
+        }
+    
         $matkul = MataKuliah::with(['comments.user'])->findOrFail($id);
-        return view('matkul.discussion', compact('matkul'));
+        
+        // Ambil data user dari session
+        $user = Pengguna::find(session('user_id'));
+    
+        return view('matkul.discussion', compact('matkul', 'user'));
     }
 
     public function manage()

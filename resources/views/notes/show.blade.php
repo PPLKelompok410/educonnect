@@ -338,6 +338,39 @@ use Illuminate\Support\Str;
                 </div>
             </div>
         </div>
+
+        <div class="bg-gray-100 rounded-lg p-4 mt-4">
+            <p class="text-sm text-gray-600">
+                @php
+                    $downloadLimit = \App\Models\DownloadLimit::where('user_id', $user->id)->first();
+                    $count = $downloadLimit ? $downloadLimit->download_count : 0;
+                    
+                    $maxDownloads = 3; // Default untuk user gratis
+                    $package = "Gratis";
+                    
+                    $latestTransaction = \App\Models\Transaction::where('user_id', $user->id)
+                        ->with('payment')
+                        ->latest()
+                        ->first();
+
+                    if ($latestTransaction && $latestTransaction->payment) {
+                        if ($latestTransaction->payment->package === 'Genius') {
+                            $maxDownloads = 5;
+                            $package = "Genius";
+                        } elseif ($latestTransaction->payment->package === 'Professor') {
+                            $maxDownloads = 10;
+                            $package = "Professor";
+                        }
+                    }
+                @endphp
+                
+                <span class="font-semibold">Paket {{ $package }}</span><br>
+                Download hari ini: {{ $count }}/{{ $maxDownloads }}
+                @if($count >= $maxDownloads)
+                    <br><span class="text-red-500">Batas download harian tercapai</span>
+                @endif
+            </p>
+        </div>
     </div>
 </div>
 
@@ -414,22 +447,163 @@ html {
         modalImage.src = images[currentIndex].dataset.src;
     });
 
-    // Unduh semua gambar sebagai PDF
-    document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
-        for (let i = 0; i < images.length; i++) {
-            const img = images[i];
-            const imgData = await toDataURL(img.src);
-            if (i > 0) pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', 10, 10, 190, 0);
-        }
-        pdf.save('catatan-semua-gambar.pdf');
-    });
+    // Tambahkan fungsi untuk mengecek dan menangani download
+    async function handleDownload() {
+        try {
+            // Tampilkan loading
+            Swal.fire({
+                title: 'Memproses...',
+                text: 'Sedang memeriksa batasan download',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        
+            // Update counter di server
+            const response = await fetch('{{ route("notes.increment-download", $note->id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            });
+        
+            // Tutup loading
+            Swal.close();
+        
+            // Debug response
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
 
+            // Cek content type response
+            const contentType = response.headers.get('content-type');
+
+            let data;
+            try {
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                if (contentType && contentType.includes('application/json')) {
+                    data = JSON.parse(responseText);
+                } else {
+                    throw new Error('Server tidak mengembalikan JSON: ' + responseText);
+                }
+            } catch (parseError) {
+                console.error('JSON Parse Error:', parseError);
+                throw new Error('Gagal parsing response dari server');
+            }
+
+            console.log('Parsed data:', data);
+        
+            if (!response.ok) {
+                if (response.status === 403) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Batas Download Tercapai',
+                        text: 'Anda telah mencapai batas download harian. Upgrade akun untuk mendapatkan lebih banyak download!',
+                        showCancelButton: true,
+                        confirmButtonText: 'Upgrade Sekarang',
+                        cancelButtonText: 'Tutup',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '{{ route("upgrade.plans") }}';
+                        }
+                    });
+                    return;
+                }
+
+                throw new Error(data.error || 'Gagal memperbarui counter download');
+            }
+        
+            // Jika berhasil, lakukan proses download PDF
+            console.log('Starting PDF generation...');
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+
+            // Pastikan ada gambar untuk didownload
+            if (!images || images.length === 0) {
+                throw new Error('Tidak ada gambar untuk didownload');
+            }
+        
+            // Tampilkan progress download
+            Swal.fire({
+                title: 'Mengunduh...',
+                text: 'Sedang membuat file PDF',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        
+            // Process images untuk PDF
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i];
+                try {
+                    // Gunakan src atau dataset.src
+                    const imgSrc = img.dataset.src || img.src;
+                    const imgData = await toDataURL(imgSrc);
+                    if (i > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 10, 10, 190, 0);
+                } catch (imgError) {
+                    console.error('Error processing image:', imgError);
+                    // Skip image yang error tapi lanjut process
+                }
+            }
+
+            // Save PDF
+            pdf.save(`catatan-${Date.now()}.pdf`);
+
+            // Tutup loading dan tampilkan pesan sukses
+            Swal.close();
+
+            // Refresh halaman untuk update counter di UI
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Download Berhasil!',
+                html: `
+                    <p>File PDF berhasil diunduh!</p>
+                    <small>Sisa download hari ini: <strong>${data.remaining_downloads}</strong></small>
+                    <br>
+                    <small>Total download hari ini: <strong>${data.current_count}/${data.max_downloads}</strong></small>
+                `,
+                timer: 3000,
+                showConfirmButton: true,
+                confirmButtonText: 'OK'
+            });
+        
+        } catch (error) {
+            console.error('Download Error:', error);
+
+            // Tutup loading jika masih terbuka
+            Swal.close();
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Terjadi kesalahan saat mengunduh file!',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    // Helper function untuk convert image ke data URL 
     function toDataURL(url) {
         return fetch(url)
-            .then(res => res.blob())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch image: ${res.status}`);
+                }
+                return res.blob();
+            })
             .then(blob => new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onloadend = () => resolve(reader.result);
@@ -437,6 +611,14 @@ html {
                 reader.readAsDataURL(blob);
             }));
     }
+
+    // Update event listener untuk tombol download
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadBtn = document.getElementById('downloadPdfBtn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', handleDownload);
+        }
+    });
 </script>
 
 @endsection
