@@ -72,16 +72,32 @@ class DashboardController
         }
 
         try {
-            // Mengambil 3 catatan terbaru
-            $recentNotes = Note::with('matkul')
-                ->where('user_id', $user->id)
+            // Mengambil 3 catatan terbaru dari semua user
+            $recentNotes = Note::with(['matkul', 'user'])
                 ->where('type', 'galeri')
-                ->latest()
-                ->limit(3)
+                ->latest()  // Order by created_at DESC
+                ->take(3)   // Limit to 3 records
                 ->get();
         } catch (\Exception $e) {
-            $recentNotes = collect(); // Empty collection
+            $recentNotes = collect(); // Empty collection if error
         }
+
+        // Get top 3 contributors
+        $topContributors = Pengguna::withCount([
+            'notes',
+            'noteComments',
+            'comments'
+        ])
+            ->get()
+            ->map(function ($pengguna) {
+                $pengguna->total_contributions =
+                    ($pengguna->notes_count ?? 0) * 3 +
+                    ($pengguna->note_comments_count ?? 0) * 2 +
+                    ($pengguna->comments_count ?? 0) * 1;
+                return $pengguna;
+            })
+            ->sortByDesc('total_contributions')
+            ->take(3);
 
         return view('dashboard', compact(
             'user',
@@ -89,7 +105,8 @@ class DashboardController
             'pendingAssignments',
             'recentActivities',
             'newDiscussions',
-            'recentNotes'
+            'recentNotes',
+            'topContributors'
         ));
     }
 

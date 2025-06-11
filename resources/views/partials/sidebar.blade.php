@@ -80,6 +80,16 @@
         <span class="whitespace-nowrap ml-3 transition-all duration-300 font-medium" :class="open ? 'opacity-100 w-auto' : 'opacity-0 w-0'">Bookmark</span>
       </a>
 
+      <!-- Upgrade Plan -->
+      <a href="{{ route('upgrade.plans') }}" 
+         class="sidebar-item flex items-center p-3 rounded-lg transition-all duration-300 hover:translate-x-1 {{ request()->routeIs('upgrade.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600' }}">
+          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+              <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+          </svg>
+          <span class="whitespace-nowrap ml-3 transition-all duration-300 font-medium" :class="open ? 'opacity-100 w-auto' : 'opacity-0 w-0'">Upgrade Plan</span>
+      </a>
+
     </nav>
 
     <!-- Logout -->

@@ -181,30 +181,40 @@ class AuthController
 
     public function reset_password_process(Request $request)
     {
-        // Ambil user yang sedang login
-        $user = session('user');
+        // Ambil email dari session (bukan user)
+        $email = session('email');
 
-        if (!$user) {
-            // Kalau tidak ada user di sesi, redirect ke login
-            return redirect()->route('auth.login')->with('message', 'Session expired. Silakan login ulang.');
+        if (!$email) {
+            // Kalau tidak ada email di session, redirect ke forgot password
+            return redirect()->route('auth.forgot_password')
+                ->with('message', 'Sesi telah berakhir. Silakan ulangi proses lupa password.');
         }
 
         // Validasi password baru
         $request->validate([
-            'new_password' => 'required|string|min:8',
+            'new_password' => 'required|string|min:8|confirmed',
+        ], [
+            'new_password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'new_password.min' => 'Password minimal 8 karakter.'
         ]);
 
-        // Update password di database
-        DB::table('penggunas')
-            ->where('email', $user->email)
-            ->update([
-                'password' => Hash::make($request->input('new_password')),
-            ]);
+        try {
+            // Update password di database berdasarkan email
+            DB::table('penggunas')
+                ->where('email', $email)
+                ->update([
+                    'password' => Hash::make($request->input('new_password')),
+                ]);
 
-        // Hapus session login supaya dipaksa login ulang
-        session()->forget(['user', 'login']);
+            // Hapus session email dan security question
+            session()->forget(['email', 'security_question']);
 
-        // Redirect ke login page dengan pesan sukses
-        return redirect()->route('auth.login')->with('message', 'Password berhasil diubah! Silakan login kembali.');
+            // Redirect ke login page dengan pesan sukses
+            return redirect()->route('auth.login')
+                ->with('message', 'Password berhasil diubah!.');
+
+        } catch (\Exception $e) {
+            return back()->with('message', 'Terjadi kesalahan saat mengubah password. Silakan coba lagi.');
+        }
     }
 }
