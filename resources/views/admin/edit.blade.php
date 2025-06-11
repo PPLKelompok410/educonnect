@@ -412,7 +412,7 @@
                         </div>
                         @if($event->image)
                         <div class="current-image">
-                            <img src="{{ asset('storage/' . $event->image) }}" alt="Current Event Image" style="max-width: 200px; margin-top: 10px; border-radius: 8px;">
+                            <img src="{{ asset($event->image) }}" alt="Current Event Image" style="max-width: 200px; margin-top: 10px; border-radius: 8px;">
                             <p><small>Foto saat ini</small></p>
                         </div>
                         @endif

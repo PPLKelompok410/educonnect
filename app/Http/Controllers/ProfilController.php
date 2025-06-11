@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profil;
+use App\Models\Note;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
@@ -20,13 +21,19 @@ class ProfilController
 
         $user = Pengguna::find(session('user_id'));
 
-        // Ubah dari firstOrNew ke firstOrCreate
+        // Get user's profile
         $profile = Profil::firstOrCreate(
             ['pengguna_id' => $user->id],
             ['phone_number' => null, 'address' => null, 'bio' => null]
         );
 
-        return view('profiles.index', compact('profile', 'user'));
+        // Get user's notes with eager loading
+        $notes = Note::with(['matkul', 'ratings', 'comments'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('profiles.index', compact('profile', 'user', 'notes'));
     }
 
     /**

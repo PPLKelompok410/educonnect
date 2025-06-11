@@ -9,7 +9,6 @@ return new class extends Migration {
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->enum('payment_method', ['GoPay', 'OVO', 'DANA', 'Transfer Bank BCA', 'Transfer Bank BRI', 'Transfer Bank BNI', 'Transfer Bank Mandiri', 'Credit Card']);
             $table->enum('package',['Genius', 'Professor']);
             $table->text('description')->nullable();
             $table->integer('price');

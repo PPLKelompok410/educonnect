@@ -606,7 +606,7 @@
                     <div class="event-row">
                         <div class="event-image-container">
                             @if($event->image)
-                            <img src="{{ asset('storage/' . $event->image) }}"
+                            <img src="{{ asset($event->image) }}"
                                 alt="{{ $event->title }}"
                                 class="event-image">
                             @else

@@ -268,20 +268,6 @@
                 <input type="hidden" id="paymentId" name="id">
                 
                 <div>
-                    <label for="paymentMethod" class="block text-sm font-semibold text-gray-700 font-poppins mb-2">Payment Method *</label>
-                    <select id="paymentMethod" name="payment_method" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-poppins">
-                        <option value="">Pilih Payment Method</option>
-                        <option value="GoPay">GoPay</option>
-                        <option value="OVO">OVO</option>
-                        <option value="DANA">DANA</option>
-                        <option value="Transfer Bank BCA">Transfer Bank BCA</option>
-                        <option value="Transfer Bank BRI">Transfer Bank BRI</option>
-                        <option value="Transfer Bank BNI">Transfer Bank BNI</option>
-                        <option value="Transfer Bank Mandiri">Transfer Bank Mandiri</option>
-                        <option value="Credit Card">Credit Card</option>
-                    </select>
-                </div>
-                <div>
                     <label for="package" class="block text-sm font-semibold text-gray-700 font-poppins mb-2">Package *</label>
                     <select id="package" name="package" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-poppins">
                         <option value="">Pilih Package</option>

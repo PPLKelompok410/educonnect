@@ -44,6 +44,8 @@ Route::post('/security_question_process', [AuthController::class, 'process_secur
 Route::get('/reset_password', [AuthController::class, 'reset_password'])->name('auth.reset_password');
 Route::post('/reset_password_process', [AuthController::class, 'reset_password_process'])->name('auth.reset_password_process');
 
+Route::post('/notes/{note}/increment-download', [NoteController::class, 'incrementDownload'])
+    ->name('notes.increment-download');
 
 // Add this route for viewing all user notes
 Route::get('/notes', function () {
@@ -56,6 +58,8 @@ Route::get('/notes', function () {
 
     return view('notes.all', compact('notes'));
 })->name('notes.all');
+
+
 
 // Page Galeri Matkul 
 Route::get('/matkul', [MataKuliahController::class, 'index'])->name('matkul.index');

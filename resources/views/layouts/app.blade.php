@@ -160,6 +160,22 @@
     </div>
   </div>
 
+  {{-- Profile Picture or Auth Links --}}
+  @if(isset($user))
+    <!-- Profile Picture -->
+    <div class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+        <span class="text-sm font-semibold text-white">
+            {{ strtoupper(substr($user->full_name, 0, 1)) }}
+        </span>
+    </div>
+  @else
+    <!-- Tampilan untuk user yang belum login -->
+    <div class="flex items-center gap-4">
+        <a href="{{ route('auth.login') }}" class="text-white hover:text-blue-200">Login</a>
+        <a href="{{ route('auth.register') }}" class="text-white hover:text-blue-200">Register</a> 
+    </div>
+  @endif
+
     @stack('scripts')
 </body>
 

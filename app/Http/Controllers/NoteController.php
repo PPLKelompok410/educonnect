@@ -7,9 +7,13 @@ use App\Models\MataKuliah;
 use App\Models\NoteRating;
 use App\Models\NoteFile;
 use App\Models\Pengguna;
+use App\Models\Transaction;
+use App\Models\DownloadLimit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class NoteController
 {
@@ -169,5 +173,140 @@ class NoteController
         }
 
         return redirect()->back()->with('success', 'Rating berhasil diberikan.');
+    }
+
+    public function incrementDownload(Note $note)
+    {
+        // Log awal untuk debugging
+        \Log::info('incrementDownload called', [
+            'note_id' => $note->id,
+            'session_user_id' => session('user_id'),
+            'has_session' => session()->has('user_id')
+        ]);
+
+        if (!session()->has('user_id')) {
+            \Log::warning('No user_id in session');
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        try {
+            $user = Pengguna::find(session('user_id'));
+            \Log::info('User found', ['user' => $user ? $user->toArray() : null]);
+
+            if (!$user) {
+                \Log::error('User not found', ['user_id' => session('user_id')]);
+                return response()->json(['error' => 'User not found'], 404);
+            }
+
+            // Cek/buat record download limit (TANPA DB TRANSACTION DULU)
+            $downloadLimit = DownloadLimit::where('user_id', $user->id)->first();
+            \Log::info('Existing download limit', ['download_limit' => $downloadLimit ? $downloadLimit->toArray() : null]);
+
+            if (!$downloadLimit) {
+                $downloadLimit = new DownloadLimit();
+                $downloadLimit->user_id = $user->id;
+                $downloadLimit->download_count = 0;
+                $downloadLimit->last_download_reset = now();
+                $downloadLimit->save();
+                \Log::info('Created new download limit', ['download_limit' => $downloadLimit->toArray()]);
+            }
+
+            // Reset counter jika sudah hari baru
+            $shouldReset = $downloadLimit->shouldResetToday();
+            \Log::info('Should reset today?', [
+                'should_reset' => $shouldReset,
+                'last_reset' => $downloadLimit->last_download_reset,
+                'current_date' => now()->format('Y-m-d')
+            ]);
+
+            if ($shouldReset) {
+                $downloadLimit->download_count = 0;
+                $downloadLimit->last_download_reset = now();
+                $downloadLimit->save();
+                \Log::info('Reset download limit', ['download_limit' => $downloadLimit->toArray()]);
+            }
+
+            // Tentukan maksimal download berdasarkan paket user
+            $maxDownloads = $this->getMaxDownloads($user);
+            \Log::info('Max downloads determined', [
+                'max_downloads' => $maxDownloads,
+                'current_count' => $downloadLimit->download_count
+            ]);
+
+            // Cek apakah sudah mencapai limit
+            if ($downloadLimit->download_count >= $maxDownloads) {
+                \Log::warning('Download limit reached', [
+                    'current_count' => $downloadLimit->download_count,
+                    'max_downloads' => $maxDownloads
+                ]);
+                return response()->json([
+                    'error' => 'Download limit reached'
+                ], 403);
+            }
+
+            // Increment download counter
+            $downloadLimit->download_count = $downloadLimit->download_count + 1;
+            $downloadLimit->save();
+            \Log::info('Incremented download count', ['new_count' => $downloadLimit->download_count]);
+
+            $responseData = [
+                'success' => true,
+                'remaining_downloads' => $maxDownloads - $downloadLimit->download_count,
+                'current_count' => $downloadLimit->download_count,
+                'max_downloads' => $maxDownloads
+            ];
+
+            \Log::info('Returning success response', $responseData);
+            return response()->json($responseData);
+        } catch (\Exception $e) {
+            \Log::error('Download increment error: ' . $e->getMessage(), [
+                'user_id' => $user->id ?? null,
+                'note_id' => $note->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat memproses download: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get maximum downloads based on user's package
+     */
+    private function getMaxDownloads($user)
+    {
+        try {
+            $latestTransaction = Transaction::where('user_id', $user->id)
+                ->with('payment')
+                ->latest()
+                ->first();
+
+            \Log::info('Latest transaction', ['transaction' => $latestTransaction ? $latestTransaction->toArray() : null]);
+
+            $maxDownloads = 3; // Default untuk user gratis
+
+            if ($latestTransaction && $latestTransaction->payment) {
+                $package = $latestTransaction->payment->package;
+                \Log::info('User package', ['package' => $package]);
+
+                switch ($package) {
+                    case 'Genius':
+                        $maxDownloads = 5;
+                        break;
+                    case 'Professor':
+                        $maxDownloads = 10;
+                        break;
+                    default:
+                        $maxDownloads = 3;
+                }
+            }
+
+            \Log::info('Final max downloads', ['max_downloads' => $maxDownloads]);
+            return $maxDownloads;
+        } catch (\Exception $e) {
+            \Log::error('Error getting max downloads: ' . $e->getMessage());
+            return 3; // Default jika error
+        }
     }
 }
