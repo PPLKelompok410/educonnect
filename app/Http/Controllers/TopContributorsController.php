@@ -10,6 +10,11 @@ class TopContributorsController
 {
     public function index()
     {
+
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();
 

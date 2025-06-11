@@ -10,6 +10,10 @@ class EventController extends Controller
 {
     public function index()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $events = Event::orderBy('event_date', 'asc')->get();
 
         return view('events', compact('events'));
@@ -29,5 +33,4 @@ class EventController extends Controller
 
         return response()->json($upcomingEvents);
     }
-
 }

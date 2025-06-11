@@ -10,6 +10,9 @@ class NoteCommentController
 {
     public function store(Request $request, $noteId)
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
         $request->validate([
             'content' => 'required|string',
         ]);

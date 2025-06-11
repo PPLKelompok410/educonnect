@@ -7,10 +7,15 @@ use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CommentController extends Controller
+class CommentController
 {
     public function store(Request $request, $matkulId)
     {
+
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $request->validate([
             'comment' => 'required|string|max:255',
         ]);

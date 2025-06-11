@@ -9,14 +9,19 @@ use App\Models\Pengguna;
 use App\Models\Payment;
 use App\Models\MataKuliah;
 
-class DashboardController extends Controller
+class DashboardController
 {
+
     // Halaman utama dashboard
     public function index()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         // Mengambil data user dari session
         $user = session('user');
-        
+
         // Cek apakah tabel enrollments ada, jika tidak gunakan alternatif
         try {
             // Menghitung jumlah kelas aktif
@@ -30,7 +35,7 @@ class DashboardController extends Controller
             // Alternatif jika Anda punya tabel lain, contoh:
             // $activeClasses = DB::table('user_classes')->where('user_id', $user->id)->count();
         }
-        
+
         try {
             // Menghitung tugas yang belum dikerjakan
             $pendingAssignments = DB::table('assignments')
@@ -43,7 +48,7 @@ class DashboardController extends Controller
             // Jika query gagal, set ke 0
             $pendingAssignments = 0;
         }
-        
+
         try {
             // Mengambil aktivitas terbaru
             $recentActivities = DB::table('activities')
@@ -54,7 +59,7 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             $recentActivities = collect(); // Empty collection
         }
-        
+
         try {
             // Menghitung diskusi baru
             $newDiscussions = DB::table('discussions')
@@ -65,7 +70,7 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             $newDiscussions = 0;
         }
-        
+
         try {
             // Mengambil 3 catatan terbaru dari semua user
             $recentNotes = Note::with(['matkul', 'user'])
@@ -83,17 +88,17 @@ class DashboardController extends Controller
             'noteComments',
             'comments'
         ])
-        ->get()
-        ->map(function ($pengguna) {
-            $pengguna->total_contributions =
-                ($pengguna->notes_count ?? 0) * 3 +
-                ($pengguna->note_comments_count ?? 0) * 2 +
-                ($pengguna->comments_count ?? 0) * 1;
-            return $pengguna;
-        })
-        ->sortByDesc('total_contributions')
-        ->take(3);
-        
+            ->get()
+            ->map(function ($pengguna) {
+                $pengguna->total_contributions =
+                    ($pengguna->notes_count ?? 0) * 3 +
+                    ($pengguna->note_comments_count ?? 0) * 2 +
+                    ($pengguna->comments_count ?? 0) * 1;
+                return $pengguna;
+            })
+            ->sortByDesc('total_contributions')
+            ->take(3);
+
         return view('dashboard', compact(
             'user',
             'activeClasses',
@@ -104,14 +109,18 @@ class DashboardController extends Controller
             'topContributors'
         ));
     }
-    
+
     // Halaman profil pengguna
     public function profile()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $user = session('user');
         return view('dashboard.profile', compact('user'));
     }
-    
+
     // Halaman daftar kelas
     public function classes()
     {
@@ -120,10 +129,10 @@ class DashboardController extends Controller
             ->join('enrollments', 'classes.id', '=', 'enrollments.class_id')
             ->where('enrollments.pengguna_id', $user->id)
             ->get();
-            
+
         return view('dashboard.classes', compact('user', 'classes'));
     }
-    
+
     // Halaman daftar tugas
     public function assignments()
     {
@@ -135,10 +144,10 @@ class DashboardController extends Controller
             ->select('assignments.*', 'classes.name as class_name')
             ->orderBy('assignments.deadline')
             ->get();
-            
+
         return view('dashboard.assignments', compact('user', 'assignments'));
     }
-    
+
     // Halaman jadwal
     public function schedule()
     {
@@ -151,10 +160,10 @@ class DashboardController extends Controller
             ->orderBy('schedules.day')
             ->orderBy('schedules.start_time')
             ->get();
-            
+
         return view('dashboard.schedule', compact('user', 'schedules'));
     }
-    
+
     // Halaman nilai
     public function grades()
     {
@@ -167,10 +176,10 @@ class DashboardController extends Controller
             ->orderBy('classes.name')
             ->orderBy('assignments.title')
             ->get();
-            
+
         return view('dashboard.grades', compact('user', 'grades'));
     }
-    
+
     // Halaman diskusi
     public function discussions()
     {
@@ -182,10 +191,10 @@ class DashboardController extends Controller
             ->select('discussions.*', 'classes.name as class_name')
             ->orderBy('discussions.created_at', 'desc')
             ->get();
-            
+
         return view('dashboard.discussions', compact('user', 'discussions'));
     }
-    
+
     public function adminDashboard()
     {
         try {
@@ -194,19 +203,19 @@ class DashboardController extends Controller
             $totalUpgradePlans = Payment::count();
             $totalMatkul = MataKuliah::count();
             $totalNotes = Note::count();
-        
+
             // Get monthly user growth
             $monthlyUsers = Pengguna::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
                 ->whereYear('created_at', date('Y'))
                 ->groupBy('month')
                 ->orderBy('month')
                 ->get();
-        
+
             // Get mata kuliah distribution
             $matkulByProdi = MataKuliah::selectRaw('prodi, COUNT(*) as count')
                 ->groupBy('prodi')
                 ->get();
-        
+
             // Pass all variables to the view
             return view('admin.dashboard', compact(
                 'totalUsers',

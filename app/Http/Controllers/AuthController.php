@@ -12,6 +12,10 @@ class AuthController
 {
     public function login()
     {
+        if (session()->has('user')) {
+            return redirect()->route('dashboard');
+        }
+
         return view('auth.login');
     }
 
@@ -57,6 +61,10 @@ class AuthController
 
     public function register()
     {
+        if (session()->has('user')) {
+            return redirect()->route('dashboard');
+        }
+
         return view('auth.register');
     }
 
