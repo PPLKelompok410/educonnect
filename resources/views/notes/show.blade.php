@@ -65,24 +65,37 @@ use Illuminate\Support\Str;
         {{-- Note Content Section --}}
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
             <div class="p-8">
-                <div class="flex items-center justify-end mb-6">
-                    {{-- Tombol unduh semua sebagai PDF --}}
-                    <button id="downloadPdfBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
-                        Unduh Semua sebagai PDF
-                    </button>
-                </div>
-
                 {{-- Galeri --}}
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-12" id="imageGallery">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6" id="imageGallery">
                     @foreach ($note->files as $index => $file)
-                        @if (Str::endsWith($file->file_path, ['jpg', 'jpeg', 'png', 'gif']))
-                            <img src="{{ asset($file->file_path) }}" 
+                        @php
+                            $filePath = asset($file->file_path);
+                            $ext = Str::lower(pathinfo($file->file_path, PATHINFO_EXTENSION));
+                        @endphp
+
+                        @if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif']))
+                            <img src="{{ $filePath }}"
                                 data-index="{{ $index }}"
-                                data-src="{{ asset($file->file_path) }}"
-                                alt="Image" 
-                              class="cursor-pointer w-full h-40 object-cover rounded-lg border border-blue hover:scale-105 transition-transform duration-200">
+                                data-src="{{ $filePath }}"
+                                alt="Image"
+                                class="cursor-pointer w-full h-40 object-cover rounded-lg border border-blue hover:scale-105 transition-transform duration-200">
+                        
+                        @elseif ($ext === 'pdf')
+                            <iframe src="{{ $filePath }}"
+                                data-index="{{ $index }}"
+                                data-src="{{ $filePath }}"
+                                class="w-full h-40 rounded-lg border border-red-400 shadow-md hover:scale-105 transition-transform duration-200 cursor-pointer"
+                                frameborder="0">
+                            </iframe>
                         @endif
                     @endforeach
+                </div>
+
+                <div class="flex items-center justify-end mb-6">
+                    {{-- Tombol unduh semua sebagai PDF --}}
+                    <button id="downloadPdfBtn" class="bg-blue-600 text-white text-sm py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                        Unduh Semua Gambar sebagai PDF
+                    </button>
                 </div>
 
                 {{-- Description Section --}}
@@ -401,7 +414,7 @@ html {
         modalImage.src = images[currentIndex].dataset.src;
     });
 
-    // Unduh semua sebagai PDF
+    // Unduh semua gambar sebagai PDF
     document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF();
