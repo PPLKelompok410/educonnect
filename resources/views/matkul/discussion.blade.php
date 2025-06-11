@@ -1,4 +1,8 @@
-@extends('layouts.app')
+@php
+    $layout = session('is_admin') === true ? 'layouts.appadmin' : 'layouts.app';
+@endphp
+
+@extends($layout)
 
 @section('title', 'Forum Diskusi - ' . $matkul->nama)
 

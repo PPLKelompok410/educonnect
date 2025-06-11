@@ -445,7 +445,7 @@
                                 class="form-input" 
                                 name="full_name"
                                 id="full_name"
-                                value="{{ old('full_name', session('user')->full_name ?? '') }}"
+                                value="{{ old('full_name', $user->full_name ?? '') }}"
                                 required
                             >
                             @error('full_name')
@@ -462,7 +462,7 @@
                             <input 
                                 type="email" 
                                 class="form-input" 
-                                value="{{ session('user')->email ?? '' }}"
+                                value="{{ $user->email ?? '' }}"
                                 disabled
                             >
                         </div>
@@ -488,7 +488,7 @@
                                 name="phone_number"
                                 id="phone_number"
                                 placeholder="Contoh: +62 812-3456-7890"
-                                value="{{ old('phone_number', session('user')->phone_number ?? '') }}"
+                                value="{{ old('phone_number', $user->phone_number ?? '') }}"
                             >
                             @error('phone_number')
                                 <div class="form-help" style="color: #ef4444;">{{ $message }}</div>
@@ -506,7 +506,7 @@
                                 name="address"
                                 id="address"
                                 placeholder="Masukkan alamat lengkap Anda"
-                                value="{{ old('address', session('user')->address ?? '') }}"
+                                value="{{ old('address', $user->address ?? '') }}"
                             >
                             @error('address')
                                 <div class="form-help" style="color: #ef4444;">{{ $message }}</div>
@@ -534,7 +534,7 @@
                             placeholder="Ceritakan sedikit tentang diri Anda, minat, dan tujuan belajar..."
                             oninput="updateCharCount(this)"
                             maxlength="500"
-                        >{{ old('bio', session('user')->bio ?? '') }}</textarea>
+                        >{{ old('bio', $user->bio ?? '') }}</textarea>
                         <div class="char-count">
                             <span id="charCount">0</span>/500 karakter
                         </div>

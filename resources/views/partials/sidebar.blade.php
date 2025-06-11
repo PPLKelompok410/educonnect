@@ -94,7 +94,7 @@
 
     <!-- Logout -->
     <div class="p-4 border-t border-gray-200">
-      <form action="{{ route('auth.login') }}" method="GET">
+      <form action="{{ route('auth.logout') }}" method="GET">
         @csrf
         <button type="submit" class="flex items-center p-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-300 w-full hover:translate-x-1">
           <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -19,7 +19,7 @@ class NoteController
 {
     public function index(MataKuliah $matkul)
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
@@ -29,16 +29,17 @@ class NoteController
             ->latest()
             ->get();
 
-        return view('notes.index', compact('notes', 'matkul'));
+        $user = Pengguna::find(session('user_id'));
+        return view('notes.index', compact('notes', 'matkul', 'user'));
     }
 
     public function create(MataKuliah $matkul)
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
-
-        return view('notes.create', compact('matkul'));
+        $user = Pengguna::find(session('user_id'));
+        return view('notes.create', compact('matkul', 'user'));
     }
 
     public function store(Request $request, MataKuliah $matkul)
@@ -50,7 +51,7 @@ class NoteController
 
         // Buat Note dulu
         $note = Note::create([
-            'user_id' => session('user')->id,
+            'user_id' => session('user_id'),
             'judul' => $request->judul,
             'matkul_id' => $matkul->id,
             'deskripsi' => $request->deskripsi,
@@ -75,17 +76,20 @@ class NoteController
 
     public function show($id)
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
+        $user = Pengguna::find(session('user_id'));
+
         $note = Note::findOrFail($id);
-        return view('notes.show', compact('note'));
+        return view('notes.show', compact('note', 'user'));
     }
 
     public function edit(Note $note)
     {
-        return view('notes.edit', compact('note'));
+        $user = Pengguna::find(session('user_id'));
+        return view('notes.edit', compact('note', 'user'));
     }
 
     public function update(Request $request, Note $note)
@@ -152,7 +156,7 @@ class NoteController
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
         ]);
-        $userId = session('user')->id;
+        $userId = session('user_id');
 
         // Update or create rating
         NoteRating::updateOrCreate(
@@ -179,25 +183,25 @@ class NoteController
             'session_user_id' => session('user_id'),
             'has_session' => session()->has('user_id')
         ]);
-    
+
         if (!session()->has('user_id')) {
             \Log::warning('No user_id in session');
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         try {
             $user = Pengguna::find(session('user_id'));
             \Log::info('User found', ['user' => $user ? $user->toArray() : null]);
-        
+
             if (!$user) {
                 \Log::error('User not found', ['user_id' => session('user_id')]);
                 return response()->json(['error' => 'User not found'], 404);
             }
-        
+
             // Cek/buat record download limit (TANPA DB TRANSACTION DULU)
             $downloadLimit = DownloadLimit::where('user_id', $user->id)->first();
             \Log::info('Existing download limit', ['download_limit' => $downloadLimit ? $downloadLimit->toArray() : null]);
-        
+
             if (!$downloadLimit) {
                 $downloadLimit = new DownloadLimit();
                 $downloadLimit->user_id = $user->id;
@@ -206,7 +210,7 @@ class NoteController
                 $downloadLimit->save();
                 \Log::info('Created new download limit', ['download_limit' => $downloadLimit->toArray()]);
             }
-        
+
             // Reset counter jika sudah hari baru
             $shouldReset = $downloadLimit->shouldResetToday();
             \Log::info('Should reset today?', [
@@ -214,21 +218,21 @@ class NoteController
                 'last_reset' => $downloadLimit->last_download_reset,
                 'current_date' => now()->format('Y-m-d')
             ]);
-        
+
             if ($shouldReset) {
                 $downloadLimit->download_count = 0;
                 $downloadLimit->last_download_reset = now();
                 $downloadLimit->save();
                 \Log::info('Reset download limit', ['download_limit' => $downloadLimit->toArray()]);
             }
-        
+
             // Tentukan maksimal download berdasarkan paket user
             $maxDownloads = $this->getMaxDownloads($user);
             \Log::info('Max downloads determined', [
                 'max_downloads' => $maxDownloads,
                 'current_count' => $downloadLimit->download_count
             ]);
-        
+
             // Cek apakah sudah mencapai limit
             if ($downloadLimit->download_count >= $maxDownloads) {
                 \Log::warning('Download limit reached', [
@@ -239,35 +243,34 @@ class NoteController
                     'error' => 'Download limit reached'
                 ], 403);
             }
-        
+
             // Increment download counter
             $downloadLimit->download_count = $downloadLimit->download_count + 1;
             $downloadLimit->save();
             \Log::info('Incremented download count', ['new_count' => $downloadLimit->download_count]);
-        
+
             $responseData = [
                 'success' => true,
                 'remaining_downloads' => $maxDownloads - $downloadLimit->download_count,
                 'current_count' => $downloadLimit->download_count,
                 'max_downloads' => $maxDownloads
             ];
-        
+
             \Log::info('Returning success response', $responseData);
             return response()->json($responseData);
-        
         } catch (\Exception $e) {
             \Log::error('Download increment error: ' . $e->getMessage(), [
                 'user_id' => $user->id ?? null,
                 'note_id' => $note->id,
                 'trace' => $e->getTraceAsString()
             ]);
-        
+
             return response()->json([
                 'error' => 'Terjadi kesalahan saat memproses download: ' . $e->getMessage()
             ], 500);
         }
     }
-    
+
     /**
      * Get maximum downloads based on user's package
      */
@@ -278,15 +281,15 @@ class NoteController
                 ->with('payment')
                 ->latest()
                 ->first();
-        
+
             \Log::info('Latest transaction', ['transaction' => $latestTransaction ? $latestTransaction->toArray() : null]);
-        
+
             $maxDownloads = 3; // Default untuk user gratis
-        
+
             if ($latestTransaction && $latestTransaction->payment) {
                 $package = $latestTransaction->payment->package;
                 \Log::info('User package', ['package' => $package]);
-            
+
                 switch ($package) {
                     case 'Genius':
                         $maxDownloads = 5;
@@ -298,7 +301,7 @@ class NoteController
                         $maxDownloads = 3;
                 }
             }
-        
+
             \Log::info('Final max downloads', ['max_downloads' => $maxDownloads]);
             return $maxDownloads;
         } catch (\Exception $e) {

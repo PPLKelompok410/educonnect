@@ -38,7 +38,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Current Subscription Status -->
     @php
-    $userTransaction = \App\Models\Transaction::where('user_id', session('user')->id)
+    $userTransaction = \App\Models\Transaction::where('user_id', session('user_id'))
         ->with('payment')
         ->orderBy('created_at', 'desc')
         ->first();

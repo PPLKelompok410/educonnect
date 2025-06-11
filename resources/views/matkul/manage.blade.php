@@ -38,6 +38,12 @@
                         <td class="px-6 py-3">{{ $mk->kode }}</td>
                         <td class="px-6 py-3">{{ $mk->prodi }}</td>
                         <td class="px-6 py-3 space-x-2">
+                            <!-- Tombol Lihat -->
+                            <a href="{{ url('matkul/' . $mk->id) }}"
+                            class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition">
+                                Lihat
+                            </a>
+
                             <!-- Tombol Edit -->
                             <button
                                 class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
@@ -75,7 +81,7 @@
                                         <label class="block mb-1 text-sm text-gray-600">Sampul (Opsional)</label>
                                         <input type="file" name="gambar" class="w-full border px-4 py-2 rounded">
                                         @if ($mk->gambar)
-                                            <img src="{{ asset('images/' . $mk->gambar) }}" alt="Sampul" class="mt-2 w-24 h-auto rounded border">
+                                            <img src="{{ asset('images/sampul/' . $mk->gambar) }}" alt="Sampul" class="mt-2 w-24 h-auto rounded border">
                                         @endif
                                     </div>
                                 </div>

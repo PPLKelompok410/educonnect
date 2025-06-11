@@ -14,11 +14,11 @@ class AdminEventController extends Controller
     public function index()
     {
         $events = Event::latest()->get();
-        
+
         foreach ($events as $event) {
             $event->image_url = $event->image ? asset($event->image) : null;
         }
-                
+
         return view('admin.index', compact('events'));
     }
 
@@ -41,18 +41,18 @@ class AdminEventController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            
+
             $publicPath = public_path('event');
             if (!File::exists($publicPath)) {
                 File::makeDirectory($publicPath, 0755, true);
             }
-            
+
             $image->move($publicPath, $imageName);
             $data['image'] = 'event/' . $imageName;
         }
 
         Event::create($data);
-        
+
         return redirect()->route('admin.index')->with('success', 'Event berhasil dibuat!');
     }
 
@@ -89,20 +89,20 @@ class AdminEventController extends Controller
 
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            
+
             // Pastikan folder event ada di public
             $publicPath = public_path('event');
             if (!File::exists($publicPath)) {
                 File::makeDirectory($publicPath, 0755, true);
             }
-            
+
             // Pindahkan file ke public/event
             $image->move($publicPath, $imageName);
             $data['image'] = 'event/' . $imageName;
         }
 
         $event->update($data);
-        
+
         return redirect()->route('admin.index')->with('success', 'Event berhasil diupdate!');
     }
 
@@ -114,7 +114,7 @@ class AdminEventController extends Controller
         }
 
         $event->delete();
-        
+
         return redirect()->route('admin.index')->with('success', 'Event berhasil dihapus!');
     }
 

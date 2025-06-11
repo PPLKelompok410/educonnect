@@ -11,7 +11,7 @@ class TopContributorsController
     public function index()
     {
 
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
@@ -37,6 +37,8 @@ class TopContributorsController
 
         $bulan_ini = Carbon::now()->isoFormat('MMMM YYYY');
 
-        return view('topcontributors.index', compact('penggunas', 'bulan_ini'));
+        $user = Pengguna::find(session('user_id'));
+
+        return view('topcontributors.index', compact('penggunas', 'bulan_ini', 'user'));
     }
 }

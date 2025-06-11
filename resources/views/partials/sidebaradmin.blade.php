@@ -25,7 +25,7 @@
         </a>
 
         <!-- Logout -->
-        <a href="{{ route('auth.login') }}" class="sidebar-item text-red-600 mt-8">
+        <a href="{{ route('auth.logout') }}" class="sidebar-item text-red-600 mt-8">
             <i class="fas fa-sign-out-alt mr-3"></i>
             <span>Logout</span>
         </a>

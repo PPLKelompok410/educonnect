@@ -1,4 +1,8 @@
-@extends('layouts.app')
+@php
+    $layout = session('is_admin') === true ? 'layouts.appadmin' : 'layouts.app';
+@endphp
+
+@extends($layout)
 
 @section('content')
 <div class="min-h-screen">
@@ -17,8 +21,9 @@
             Jelajahi koleksi catatan dan materi pembelajaran untuk mata kuliah ini
           </p>
         </div>
-        
+    
         <div class="flex flex-col sm:flex-row gap-3">
+        @if (!session('is_admin'))
           <a href="{{ route('notes.create', $matkul->id) }}" 
              class="group bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md text-white px-6 py-3 rounded-xl flex items-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <svg class="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,6 +31,7 @@
             </svg>
             <span class="font-semibold">Tambah</span>
           </a>
+        @endif
           
           <a href="{{ route('matkul.discussion', $matkul->id) }}" 
              class="group bg-white border-2 border-gray-200 hover:border-blue-300 text-gray-700 hover:text-blue-600 px-6 py-3 rounded-xl flex items-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -79,11 +85,11 @@
           </div>
 
           <!-- Bookmark Button -->
-          @if(session('user'))
+          @if(session('user_id'))
           <button onclick="event.preventDefault(); event.stopPropagation(); toggleBookmark({{ $note->id }}, this)" 
-                  class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white {{ $note->bookmarks->where('user_id', session('user')->id)->count() ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500' }}"
+                  class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white {{ $note->bookmarks->where('user_id', session('user_id'))->count() ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500' }}"
                   title="Bookmark">
-            <svg class="w-5 h-5" fill="{{ $note->bookmarks->where('user_id', session('user')->id)->count() ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5" fill="{{ $note->bookmarks->where('user_id', session('user_id'))->count() ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
           </button>

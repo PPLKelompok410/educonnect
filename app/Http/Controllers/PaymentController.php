@@ -15,7 +15,7 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
@@ -99,7 +99,7 @@ class PaymentController extends Controller
             ->groupBy('package');
 
         // Get user data if logged in
-        $user = session('user');
+        $user = Pengguna::find(session('user_id'));
 
         return view('payments.upgrade-plans', compact('payments', 'user'));
     }
@@ -110,7 +110,7 @@ class PaymentController extends Controller
         $payment = Payment::findOrFail($plan);
 
         // Get user data
-        $user = session('user');
+        $user = Pengguna::find(session('user_id'));
 
         if (!$user) {
             return redirect()->route('auth.login')
@@ -136,7 +136,7 @@ class PaymentController extends Controller
             ]);
 
             $payment = Payment::findOrFail($plan);
-            $user = session('user');
+            $user = Pengguna::find(session('user_id'));
 
             if (!$user) {
                 return response()->json([
@@ -207,7 +207,7 @@ class PaymentController extends Controller
     public function cancelSubscription()
     {
         try {
-            $user = session('user');
+            $user = Pengguna::find(session('user_id'));
 
             // Get latest transaction
             $transaction = Transaction::where('user_id', $user->id)

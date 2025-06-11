@@ -37,7 +37,7 @@ class CommentController
             ->with('success', 'Comment added successfully');
     }
 
-    public function edit($id) 
+    public function edit($id)
     {
         // Check if user is logged in
         if (!session()->has('user_id')) {

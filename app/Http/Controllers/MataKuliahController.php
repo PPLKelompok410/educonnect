@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MataKuliah;
+use App\Models\Pengguna;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -11,14 +12,15 @@ class MataKuliahController
 {
     public function index()
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
+        $user = Pengguna::find(session('user_id'));
         $mataKuliah = MataKuliah::all();
         $prodis = MataKuliah::select('prodi')->distinct()->pluck('prodi');
 
-        return view('matkul.galleryMatkul', compact('mataKuliah', 'prodis'));
+        return view('matkul.galleryMatkul', compact('user', 'mataKuliah', 'prodis'));
     }
 
     public function discussion($id)

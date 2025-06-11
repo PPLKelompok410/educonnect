@@ -14,25 +14,31 @@
       </div>
     </div>
 
+    @php
+    $userTransaction = null;
+    @endphp
+    
     <div class="flex items-center">
       <div class="relative">
         <a href="{{ route('profiles.index') }}" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 focus:outline-none transition-all duration-200">
           <!-- Profile Picture -->
           <div class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
             <span class="text-sm font-semibold text-white">
-              {{ strtoupper(substr(session('user')->full_name, 0, 1)) }}
+              {{ strtoupper(substr($user->full_name, 0, 1)) }}
             </span>
           </div>
 
           <!-- User Info -->
           <div class="flex items-center">
-            <span class="font-medium text-white">{{ session('user')->full_name }}</span>
-            @php
-                $userTransaction = \App\Models\Transaction::where('user_id', session('user')->id)
-                                                         ->with('payment')
-                                                         ->latest()
-                                                         ->first();
-            @endphp
+            <span class="font-medium text-white">{{ $user->full_name }}</span>
+            @if ($user && isset($user->id))
+                @php
+                    $userTransaction = \App\Models\Transaction::where('user_id', $user->id)
+                                                              ->with('payment')
+                                                              ->latest()
+                                                              ->first();
+                @endphp
+            @endif
             
             @if($userTransaction && $userTransaction->payment)
                 <span class="package-badge" style="background-color: #10b981; color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; font-weight: 500; margin-left: 8px;">
