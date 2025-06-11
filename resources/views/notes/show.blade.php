@@ -2,11 +2,6 @@
 
 @section('content')
 
-@php
-$currentUser = session('user');
-use Illuminate\Support\Str;
-@endphp
-
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
     <div class="max-w-5xl mx-auto py-8 px-4">
         
@@ -36,7 +31,7 @@ use Illuminate\Support\Str;
                         </div>
                     </div>
                     
-                    @if ($currentUser && $note->user_id === $currentUser->id)
+                    @if ($user && $note->user_id === $user->id)
                     <div class="flex gap-3">
                         <a href="{{ route('notes.edit', $note->id) }}" 
                            class="group bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-all duration-300 backdrop-blur-sm">
@@ -146,7 +141,7 @@ use Illuminate\Support\Str;
                     
                     <div 
                         x-data="{
-                            rating: {{ $note->ratings->where('user_id', $currentUser->id ?? 0)->first()->rating ?? 0 }},
+                            rating: {{ $note->ratings->where('user_id', $$user->id ?? 0)->first()->rating ?? 0 }},
                             hoverRating: 0,
                             setRating(value) {
                                 this.rating = value;
@@ -299,7 +294,7 @@ use Illuminate\Support\Str;
                                 </div>
 
                                 {{-- Action Buttons --}}
-                                @if ($currentUser && $comment->user_id === $currentUser->id)
+                                @if ($user && $comment->user_id === $user->id)
                                 <div class="flex gap-2 ml-4">
                                     <button x-on:click="editing = true"
                                             class="group p-2 text-blue-500 hover:bg-blue-100 rounded-lg transition-all duration-300">

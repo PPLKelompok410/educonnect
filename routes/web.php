@@ -14,6 +14,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\DashboardController;
 use App\Models\Note;
+use App\Models\Pengguna;
 
 Route::view('/', 'welcome')->name('welcome');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -34,6 +35,7 @@ Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/login_process', [AuthController::class, 'login_process'])->name('auth.login_process');
 Route::get('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/register_process', [AuthController::class, 'register_process'])->name('auth.register_process');
+Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/forgot_password', [AuthController::class, 'forgot_password'])->name('auth.forgot_password');
 Route::post('/forgot_password_process', [AuthController::class, 'process_forgot_password'])->name('auth.forgot_password_process');
@@ -45,7 +47,7 @@ Route::post('/reset_password_process', [AuthController::class, 'reset_password_p
 
 // Add this route for viewing all user notes
 Route::get('/notes', function () {
-    $user = session('user');
+    $user = Pengguna::find(session('user_id'));
     $notes = Note::with('matkul')
         ->where('user_id', $user->id)
         ->where('type', 'galeri')

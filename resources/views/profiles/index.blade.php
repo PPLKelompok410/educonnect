@@ -404,7 +404,7 @@
     <div class="container">
         <!-- Page Header -->
         <div class="page-header">
-            <h1 class="page-title">Profile - {{ session('user')->full_name }}</h1>
+            <h1 class="page-title">Profile - {{ $user->full_name }}</h1>
         </div>
 
         <!-- Profile Form -->
@@ -444,7 +444,7 @@
                                 class="form-input" 
                                 name="full_name"
                                 id="fullName"
-                                value="{{ old('full_name', session('user')->full_name ?? '') }}"
+                                value="{{ old('full_name', $user->full_name ?? '') }}"
                                 disabled
                             >
                             @error('full_name')
@@ -461,7 +461,7 @@
                             <input 
                                 type="email" 
                                 class="form-input" 
-                                value="{{ session('user')->email ?? '' }}"
+                                value="{{ $user->email ?? '' }}"
                                 disabled
                             >
                         </div>

@@ -14,11 +14,11 @@ class ProfilController
      */
     public function index()
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
-        $user = Pengguna::find(session('user')->id);
+        $user = Pengguna::find(session('user_id'));
 
         // Ubah dari firstOrNew ke firstOrCreate
         $profile = Profil::firstOrCreate(
@@ -50,7 +50,7 @@ class ProfilController
         ]);
 
         try {
-            $validatedData['pengguna_id'] = session('user')->id;
+            $validatedData['pengguna_id'] = session('user_id');
             Profil::create($validatedData);
             return redirect()->route('profiles.index')->with('success', 'Biodata berhasil ditambahkan.');
         } catch (QueryException $e) {
@@ -64,7 +64,7 @@ class ProfilController
     public function show(Profil $profile)
     {
 
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
@@ -80,7 +80,7 @@ class ProfilController
      */
     public function edit($id)
     {
-        $user = Pengguna::find(session('user')->id);
+        $user = Pengguna::find(session('user_id'));
         $profile = Profil::firstOrNew(['pengguna_id' => $user->id]);
         return view('profiles.edit', compact('user', 'profile'));
     }
@@ -90,7 +90,7 @@ class ProfilController
      */
     public function update(Request $request, Profil $profile)
     {
-        $user = Pengguna::find(session('user')->id);
+        $user = Pengguna::find(session('user_id'));
 
         $validatedData = $request->validate([
             'full_name' => 'required|string|max:255',
@@ -115,7 +115,6 @@ class ProfilController
                 ]
             );
 
-            session()->put('user', $user);
             return redirect()->route('profiles.index')->with('success', 'Profil berhasil diperbarui.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui profil.');
@@ -129,7 +128,7 @@ class ProfilController
     {
         try {
             // Get the currently logged in user
-            $user = Pengguna::find(session('user')->id);
+            $user = Pengguna::find(session('user_id'));
 
             if (!$user) {
                 return redirect()->back()->with('error', 'User tidak ditemukan.');
@@ -142,7 +141,7 @@ class ProfilController
             $user->delete();
 
             // Clear the session
-            session()->forget('user');
+            session()->forget('user_id');
 
             return redirect()->route('landing')->with('success', 'Akun berhasil dihapus!');
         } catch (\Exception $e) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
 use App\Models\Note;
+use App\Models\Pengguna;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,21 +13,22 @@ class BookmarkController extends Controller
     public function index()
     {
 
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
         $bookmarks = Bookmark::with('note.user')
-            ->where('user_id', session('user')->id)
+            ->where('user_id', session('user_id'))
             ->latest()
             ->get();
 
-        return view('bookmarks.index', compact('bookmarks'));
+        $user = Pengguna::find(session('user_id'));
+        return view('bookmarks.index', compact('bookmarks', 'user'));
     }
 
     public function toggle(Note $note)
     {
-        $user_id = session('user')->id;
+        $user_id = session('user_id');
         $bookmark = Bookmark::where('user_id', $user_id)
             ->where('note_id', $note->id)
             ->first();

@@ -6,6 +6,7 @@ use App\Models\Note;
 use App\Models\MataKuliah;
 use App\Models\NoteRating;
 use App\Models\NoteFile;
+use App\Models\Pengguna;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class NoteController
 {
     public function index(MataKuliah $matkul)
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
@@ -24,16 +25,17 @@ class NoteController
             ->latest()
             ->get();
 
-        return view('notes.index', compact('notes', 'matkul'));
+        $user = Pengguna::find(session('user_id'));
+        return view('notes.index', compact('notes', 'matkul', 'user'));
     }
 
     public function create(MataKuliah $matkul)
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
-
-        return view('notes.create', compact('matkul'));
+        $user = Pengguna::find(session('user_id'));
+        return view('notes.create', compact('matkul', 'user'));
     }
 
     public function store(Request $request, MataKuliah $matkul)
@@ -45,7 +47,7 @@ class NoteController
 
         // Buat Note dulu
         $note = Note::create([
-            'user_id' => session('user')->id,
+            'user_id' => session('user_id'),
             'judul' => $request->judul,
             'matkul_id' => $matkul->id,
             'deskripsi' => $request->deskripsi,
@@ -70,17 +72,20 @@ class NoteController
 
     public function show($id)
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
+        $user = Pengguna::find(session('user_id'));
+
         $note = Note::findOrFail($id);
-        return view('notes.show', compact('note'));
+        return view('notes.show', compact('note', 'user'));
     }
 
     public function edit(Note $note)
     {
-        return view('notes.edit', compact('note'));
+        $user = Pengguna::find(session('user_id'));
+        return view('notes.edit', compact('note', 'user'));
     }
 
     public function update(Request $request, Note $note)
@@ -147,7 +152,7 @@ class NoteController
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
         ]);
-        $userId = session('user')->id;
+        $userId = session('user_id');
 
         // Update or create rating
         NoteRating::updateOrCreate(

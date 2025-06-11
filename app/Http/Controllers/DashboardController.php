@@ -15,12 +15,12 @@ class DashboardController
     // Halaman utama dashboard
     public function index()
     {
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
         // Mengambil data user dari session
-        $user = session('user');
+        $user = Pengguna::find(session('user_id'));
 
         // Cek apakah tabel enrollments ada, jika tidak gunakan alternatif
         try {
@@ -124,6 +124,11 @@ class DashboardController
     // Halaman daftar kelas
     public function classes()
     {
+
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $user = session('user');
         $classes = DB::table('classes')
             ->join('enrollments', 'classes.id', '=', 'enrollments.class_id')
@@ -136,6 +141,11 @@ class DashboardController
     // Halaman daftar tugas
     public function assignments()
     {
+
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $user = session('user');
         $assignments = DB::table('assignments')
             ->join('enrollments', 'assignments.class_id', '=', 'enrollments.class_id')
@@ -151,6 +161,11 @@ class DashboardController
     // Halaman jadwal
     public function schedule()
     {
+
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $user = session('user');
         $schedules = DB::table('schedules')
             ->join('classes', 'schedules.class_id', '=', 'classes.id')
@@ -167,6 +182,10 @@ class DashboardController
     // Halaman nilai
     public function grades()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $user = session('user');
         $grades = DB::table('grades')
             ->join('assignments', 'grades.assignment_id', '=', 'assignments.id')
@@ -183,6 +202,10 @@ class DashboardController
     // Halaman diskusi
     public function discussions()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         $user = session('user');
         $discussions = DB::table('discussions')
             ->join('classes', 'discussions.class_id', '=', 'classes.id')
@@ -197,6 +220,10 @@ class DashboardController
 
     public function adminDashboard()
     {
+        if (!session()->has('user')) {
+            return redirect()->route('auth.login');
+        }
+
         try {
             // Get total counts
             $totalUsers = Pengguna::count();

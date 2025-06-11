@@ -7,12 +7,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use App\Models\Pengguna;
 
 class AuthController
 {
     public function login()
     {
-        if (session()->has('user')) {
+        if (session()->has('user_id')) {
             return redirect()->route('dashboard');
         }
 
@@ -32,6 +35,7 @@ class AuthController
                     'email' => $email,
                     'full_name' => 'Administrator'
                 ],
+                'user_id' => 0,
                 'login' => true,
                 'is_admin' => true,
             ]);
@@ -39,7 +43,7 @@ class AuthController
         }
 
         // Cek apakah email terdaftar di database
-        $user = DB::table('penggunas')->where('email', $email)->first();
+        $user = Pengguna::where('email', $email)->first();
 
         if (!$user) {
             // Email tidak terdaftar
@@ -55,13 +59,13 @@ class AuthController
         }
 
         // Login berhasil
-        session(['user' => $user, 'login' => true]);
+        session(['user_id' => $user->id, 'login' => true, 'is_admin' => false]);
         return redirect()->route('dashboard');
     }
 
     public function register()
     {
-        if (session()->has('user')) {
+        if (session()->has('user_id')) {
             return redirect()->route('dashboard');
         }
 
@@ -212,9 +216,17 @@ class AuthController
             // Redirect ke login page dengan pesan sukses
             return redirect()->route('auth.login')
                 ->with('message', 'Password berhasil diubah!.');
-
         } catch (\Exception $e) {
             return back()->with('message', 'Terjadi kesalahan saat mengubah password. Silakan coba lagi.');
         }
+    }
+
+    public function logout(): RedirectResponse
+    {
+        Auth::logout(); // Logout user dari sistem
+        request()->session()->invalidate(); // Hapus session
+        request()->session()->regenerateToken(); // Regenerasi CSRF token
+
+        return redirect('/login')->with('status', 'You have been logged out.');
     }
 }

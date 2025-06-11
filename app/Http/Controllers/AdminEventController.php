@@ -6,17 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class AdminEventController extends Controller
 {
     public function index()
     {
         $events = Event::latest()->get();
-        
+
         foreach ($events as $event) {
             $event->image_url = $event->image ? url('storage/' . $event->image) : null;
         }
-                
+
         return view('admin.index', compact('events'));
     }
 
@@ -44,21 +46,21 @@ class AdminEventController extends Controller
         }
 
         Event::create($data);
-        
+
         return redirect()->route('admin.index')->with('success', 'Event berhasil dibuat!');
     }
 
     public function show(Event $event)
     {
         $event->image_url = $event->image ? url('storage/' . $event->image) : null;
-        
+
         return view('admin.show', compact('event'));
     }
 
     public function edit(Event $event)
     {
         $event->image_url = $event->image ? url('storage/' . $event->image) : null;
-        
+
         return view('admin.edit', compact('event'));
     }
 
@@ -85,7 +87,7 @@ class AdminEventController extends Controller
         }
 
         $event->update($data);
-        
+
         return redirect()->route('admin.index')->with('success', 'Event berhasil diupdate!');
     }
 
@@ -96,7 +98,16 @@ class AdminEventController extends Controller
         }
 
         $event->delete();
-        
+
         return redirect()->route('admin.index')->with('success', 'Event berhasil dihapus!');
+    }
+
+    public function logout(): RedirectResponse
+    {
+        Auth::logout(); // Logout user dari sistem
+        request()->session()->invalidate(); // Hapus session
+        request()->session()->regenerateToken(); // Regenerasi CSRF token
+
+        return redirect('/login')->with('status', 'You have been logged out.');
     }
 }

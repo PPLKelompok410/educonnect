@@ -12,7 +12,7 @@ class CommentController
     public function store(Request $request, $matkulId)
     {
 
-        if (!session()->has('user')) {
+        if (!session()->has('user_id')) {
             return redirect()->route('auth.login');
         }
 
