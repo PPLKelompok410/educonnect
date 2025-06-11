@@ -28,7 +28,7 @@ class Note extends Model
 
     public function matkul()
     {
-        return $this->belongsTo(MataKuliah::class);
+        return $this->belongsTo(MataKuliah::class, 'matkul_id');
     }
 
     public function bookmarks()

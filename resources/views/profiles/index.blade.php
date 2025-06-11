@@ -856,9 +856,9 @@
                                 @foreach($notes as $note)
                                 <div class="note-card" data-note-id="{{ $note->id }}">
                                     <div class="note-header">
-                                        <div class="note-subject">
-                                            <i class="fas fa-book"></i>
-                                            {{ $note->subject ?? 'Umum' }}
+                                        <div class="note-subject pl-2">
+                                            <i class="fas fa-book mr1"></i>
+                                            {{ $note->matkul ? $note->matkul->nama : 'Umum' }}
                                         </div>
                                         <div class="note-date">
                                             <i class="fas fa-calendar-alt"></i>

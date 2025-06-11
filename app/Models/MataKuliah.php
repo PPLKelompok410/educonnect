@@ -9,6 +9,8 @@ class MataKuliah extends Model
 {
     use HasFactory;
 
+    protected $table = 'mata_kuliahs';
+
     protected $fillable = ['nama', 'kode', 'prodi', 'gambar', 'deskripsi'];
 
     /**
