@@ -20,7 +20,7 @@
     
     <div class="flex items-center">
       <div class="relative">
-        <a href="{{ route('profiles.index') }}" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 focus:outline-none transition-all duration-200">
+        <a href="{{ route('profiles.profile') }}" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 focus:outline-none transition-all duration-200">
           <!-- Profile Picture -->
           <div class="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
             <span class="text-sm font-semibold text-white">
@@ -45,16 +45,12 @@
                     {{ $userTransaction->payment->package }}
                 </span>
             @endif
-            <!-- Dropdown Icon -->
-            <svg class="w-4 h-4 ml-2 text-white opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
           </div>
         </a>
 
         <!-- Optional: Hover Tooltip -->
         <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 hidden group-hover:block">
-          <a href="{{ route('profiles.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+          <a href="{{ route('profiles.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
             View Profile
           </a>
         </div>

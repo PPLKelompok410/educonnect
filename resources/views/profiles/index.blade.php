@@ -14,24 +14,6 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            color: #334155;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
-        }
-
         .logo {
             font-family: 'Open Sans', sans-serif;
             font-size: 1.5rem;
@@ -43,11 +25,6 @@
 
         .logo i {
             font-size: 1.8rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
         }
 
         .header-btn {
@@ -79,20 +56,7 @@
         .header-btn.cancel:hover {
             background: rgba(239, 68, 68, 0.3);
         }
-
-        /* Main Container */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Page Header */
-        .page-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
+        
         .page-title {
             font-family: 'Open Sans', sans-serif;
             font-size: 2.5rem;

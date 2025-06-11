@@ -20,4 +20,9 @@ class Comment extends Model
     {
         return $this->belongsTo(Pengguna::class);
     }
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class)->latest();
+    }
 }

@@ -26,7 +26,8 @@ class MataKuliahController
     public function discussion($id)
     {
         $matkul = MataKuliah::with(['comments.user'])->findOrFail($id);
-        return view('matkul.discussion', compact('matkul'));
+        $user = Pengguna::find(session('user_id'));
+        return view('matkul.discussion', compact('matkul', 'user'));
     }
 
     public function manage()
