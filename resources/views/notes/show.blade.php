@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+<div class="min-h-screen bg-transparent">
     <div class="max-w-5xl mx-auto py-8 px-4">
         
         {{-- Header Section --}}
@@ -334,7 +334,7 @@
             </div>
         </div>
 
-        <div class="bg-gray-100 rounded-lg p-4 mt-4">
+        <div class="bg-gray-100 rounded-lg p-4 mt-8">
             <p class="text-sm text-gray-600">
                 @php
                     $downloadLimit = \App\Models\DownloadLimit::where('user_id', $user->id)->first();

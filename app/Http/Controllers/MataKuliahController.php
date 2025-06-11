@@ -60,7 +60,7 @@ class MataKuliahController
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images'), $filename); // ⬅️ simpan ke public/images
+            $file->move(public_path('images/sampul'), $filename); // ⬅️ simpan ke public/images/sampul
             $data['gambar'] = $filename; // simpan nama file saja ke DB
         }
 
@@ -91,7 +91,7 @@ class MataKuliahController
         if ($request->hasFile('gambar')) {
             // Hapus gambar lama jika ada
             if ($matkul->gambar) {
-                $oldPath = public_path('images/' . $matkul->gambar);
+                $oldPath = public_path('images/sampul/' . $matkul->gambar);
                 if (File::exists($oldPath)) {
                     File::delete($oldPath);
                 }
@@ -100,7 +100,7 @@ class MataKuliahController
             // Simpan gambar baru
             $file = $request->file('gambar');
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images'), $filename);
+            $file->move(public_path('images/sampul'), $filename);
             $data['gambar'] = $filename;
         }
 
