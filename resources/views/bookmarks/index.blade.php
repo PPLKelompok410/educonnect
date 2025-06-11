@@ -85,7 +85,7 @@
     <div class="text-center py-16">
         <h3 class="text-2xl font-bold text-gray-800 mb-4">Belum ada bookmark</h3>
         <p class="text-gray-600 text-lg mb-8">Tandai catatan favoritmu untuk akses cepat kapan saja!</p>
-        <a href="{{ route('notes.index') }}"
+        <a href="{{ url('/matkul') }}"
             class="inline-flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
