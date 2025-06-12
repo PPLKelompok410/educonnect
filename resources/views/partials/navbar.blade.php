@@ -3,7 +3,7 @@
     <div class="flex items-center">
       <span class="font-title text-2xl">EduConnect</span>
     </div>
-    <div class="flex-grow mx-10 max-w-2xl">
+    {{-- <div class="flex-grow mx-10 max-w-2xl">
       <div class="relative">
         <input type="text" placeholder="Search courses, notes, forums..." class="w-full py-2 px-4 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
         <button class="absolute right-3 top-2.5">
@@ -12,7 +12,7 @@
           </svg>
         </button>
       </div>
-    </div>
+    </div> --}}
 
     @php
     $userTransaction = null;
