@@ -105,7 +105,8 @@
 
         {{-- Modal --}}
         <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center">
-            <div class="relative max-w-5xl w-full flex items-center justify-center px-4">
+            <div class="relative w-full h-full flex items-center justify-center px-4">
+
                 {{-- Tombol Close di luar kiri atas --}}
                 <button id="closeModal" class="absolute top-6 left-6 text-white text-4xl z-50 hover:text-red-400 transition">
                     &times;
@@ -117,14 +118,16 @@
                 </div>
 
                 {{-- Gambar Utama --}}
-                <img id="modalImage" src="" class="max-h-[80vh] w-auto rounded-xl shadow-lg border border-white">
+                <img id="modalImage" src="" class="max-w-full max-h-full object-contain rounded-xl shadow-lg border border-white">
 
                 {{-- Tombol Next di kanan luar --}}
                 <div class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 cursor-pointer text-white text-5xl z-50 hover:text-blue-400 transition" id="nextImage">
                     &#10095;
                 </div>
+
             </div>
         </div>
+
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {{-- Rating Section --}}

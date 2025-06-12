@@ -38,11 +38,6 @@
                         <td class="px-6 py-3">{{ $mk->kode }}</td>
                         <td class="px-6 py-3">{{ $mk->prodi }}</td>
                         <td class="px-6 py-3 space-x-2">
-                            <!-- Tombol Lihat -->
-                            <a href="{{ url('matkul/' . $mk->id) }}"
-                            class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition">
-                                Lihat
-                            </a>
 
                             <!-- Tombol Edit -->
                             <button
